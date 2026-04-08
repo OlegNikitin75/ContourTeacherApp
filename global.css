@@ -1,0 +1,121 @@
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+
+@import 'nativewind/theme';
+@theme {
+	--color-app-black: #150D0B;
+	--color-app-light-gray: #EAEAEA;
+	--color-app-gray: #838383;
+	--color-app-dark-gray: #3F3F3F;
+	--color-app-white: #FFFFFF;
+	--color-app-accent: #998FFB;
+	--color-app-success: #366C52;
+	--color-app-error: #C93C3D;
+	--color-app-warning: #F8B32F;
+
+	--corner-small: 8px;
+	--corner-medium: 24px;
+	--corner-large: 48px;
+	--corner-extra-large: 100px;
+
+	--spacing-0: 0px;
+	--spacing-1: 4px;
+	--spacing-2: 8px;
+	--spacing-3: 12px;
+	--spacing-4: 16px;
+	--spacing-5: 20px;
+	--spacing-6: 24px;
+	--spacing-7: 28px;
+	--spacing-8: 32px;
+	--spacing-9: 36px;
+	--spacing-10: 40px;
+	--spacing-11: 44px;
+	--spacing-12: 48px;
+	--spacing-14: 56px;
+	--spacing-16: 64px;
+	--spacing-18: 72px;
+	--spacing-20: 80px;
+	--spacing-24: 96px;
+	--spacing-30: 120px;
+}
+
+@layer utilities {
+  .font-jetbrains-mono {
+    font-family: 'JetBrainsMono-Regular', monospace;
+  }
+  
+  .font-jetbrains-mono-medium {
+    font-family: 'JetBrainsMono-Medium', monospace;
+  }
+
+   .text-h1 {
+    font-family: 'JetBrainsMono-Medium', monospace;
+    font-weight: 500;
+    font-size: 1.875rem;
+    line-height: 38px;
+    letter-spacing: -0.04em;
+  }
+  
+  .text-h2 {
+    font-family: 'JetBrainsMono-Medium', monospace;
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 36px;
+    letter-spacing: -0.04em;
+  }
+  
+  .text-h3 {
+    font-family: 'JetBrainsMono-Medium', monospace;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 20px;
+    letter-spacing: -0.04em;
+  }
+  
+  .text-t1 {
+    font-family: 'JetBrainsMono-Regular', monospace;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 18px;
+    letter-spacing: -0.04em;
+  }
+  
+  .text-t2 {
+    font-family: 'JetBrainsMono-Regular', monospace;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 16px;
+    letter-spacing: -0.04em;
+  }
+  
+  .text-l1 {
+    font-family: 'JetBrainsMono-Medium', monospace;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 18px;
+    letter-spacing: -0.04em;
+  }
+  
+  .text-l2 {
+    font-family: 'JetBrainsMono-Medium', monospace;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -0.04em;
+  }
+}
+@layer components {
+	.tabs-icon {
+		@apply size-12 items-center justify-center;
+	}
+	.tabs-pill {
+		@apply size-12 items-center justify-center rounded-full bg-transparent;
+	}
+	.tabs-active {
+		@apply bg-app-white text-app-black;
+	}
+	.tabs-glyph {
+		@apply size-6;
+	}
+}
