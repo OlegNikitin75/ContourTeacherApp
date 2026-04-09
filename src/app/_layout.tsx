@@ -1,44 +1,44 @@
-import { useEffect } from 'react';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import * as SplashScreen from 'expo-splash-screen';
-import '@/global.css'; 
-import 'react-native-reanimated';
+import { useEffect } from 'react'
+import { Stack } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import * as SplashScreen from 'expo-splash-screen'
+import '@/global.css'
+import 'react-native-reanimated'
+import { useFonts } from 'expo-font'
+import { JetBrainsMono_400Regular, JetBrainsMono_500Medium } from '@expo-google-fonts/jetbrains-mono'
 
 // Удерживаем экран загрузки, пока приложение не готово
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
-  useEffect(() => {
-    // Скрываем сплэш-скрин после загрузки (здесь можно загружать шрифты)
-    SplashScreen.hideAsync();
-  }, []);
+	const [fontsLoaded, fontError] = useFonts({
+		'JetBrainsMono-Regular': JetBrainsMono_400Regular,
+		'JetBrainsMono-Medium': JetBrainsMono_500Medium
+	})
 
-  return (
-    // 1. GestureHandlerRootView необходим для работы библиотеки Moti и Reanimated
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      {/* 2. SafeAreaProvider позволяет нашему таббару знать высоту "челки" и нижней полоски */}
-      <SafeAreaProvider>
-        {/* 3. StatusBar — делаем иконки в статус-баре темными/светлыми автоматически */}
-        <StatusBar style="auto" />
-        
-        {/* Главный стек навигации */}
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          
-          {/* Здесь можно добавить модальное окно поиска, которое будет открываться на весь экран */}
-          <Stack.Screen 
-            name="search-modal" 
-            options={{ 
-              presentation: 'modal',
-              headerShown: true,
-              title: 'Поиск'
-            }} 
-          />
-        </Stack>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
-  );
+	// Скрываем сплэш-скрин ТОЛЬКО после загрузки шрифтов
+	useEffect(() => {
+		if (fontsLoaded || fontError) {
+			SplashScreen.hideAsync()
+		}
+	}, [fontsLoaded, fontError])
+
+	if (!fontsLoaded && !fontError) {
+		return null // Показываем ничего, пока шрифты не загрузятся
+	}
+
+	return (
+		<GestureHandlerRootView style={{ flex: 1 }}>
+			<SafeAreaProvider>
+				<StatusBar style='auto' />
+
+				<Stack screenOptions={{ headerShown: false }}>
+					<Stack.Screen name='(intro)' options={{ headerShown: false }} />
+					{/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
+				</Stack>
+			</SafeAreaProvider>
+		</GestureHandlerRootView>
+	)
 }

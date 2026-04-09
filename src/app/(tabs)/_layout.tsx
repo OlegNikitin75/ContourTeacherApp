@@ -33,14 +33,14 @@ export default function TabLayout() {
 					position: 'absolute',
 					bottom: bottomPadding,
 					left: 16,
-					width: width * 0.69,
-					height: 64,
+					width: width * 0.7,
+					height: 54,
 					backgroundColor: colors.appBlack,
-					borderRadius: 35,
+					borderRadius: 100,
 					flexDirection: 'row',
 					alignItems: 'center',
 					justifyContent: 'space-between',
-					paddingHorizontal: 5
+					// paddingHorizontal: 5
 				}}
 			>
 				{TABS.map(tab => {
@@ -68,7 +68,7 @@ export default function TabLayout() {
 									flexDirection: 'row',
 									alignItems: 'center',
 									justifyContent: 'center',
-									height: 48,
+									height: 44,
 									borderRadius: 23
 								}}
 							>
@@ -82,7 +82,7 @@ export default function TabLayout() {
 											exit={{ opacity: 0, width: 0, marginLeft: 0 }}
 											style={{ overflow: 'hidden' }}
 										>
-											<Text numberOfLines={1} style={{ color: colors.appBlack, fontSize: 12,paddingBottom:5 }}>
+											<Text numberOfLines={1} style={{ color: colors.appBlack, fontSize: 11,paddingBottom:4 }} className='font-jetbrains-mono'>
 												{tab.label}
 											</Text>
 										</MotiView>
@@ -98,8 +98,8 @@ export default function TabLayout() {
 				<TouchableOpacity
 					activeOpacity={0.8}
 					style={{
-						width: 64,
-						height: 64,
+						width: 54,
+						height: 54,
 						borderRadius: 32,
 						backgroundColor: colors.appBlack,
 						alignItems: 'center',

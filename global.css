@@ -52,7 +52,7 @@
    .text-h1 {
     font-family: 'JetBrainsMono-Medium', monospace;
     font-weight: 500;
-    font-size: 1.875rem;
+    font-size: 30px;
     line-height: 38px;
     letter-spacing: -0.04em;
   }
@@ -60,7 +60,7 @@
   .text-h2 {
     font-family: 'JetBrainsMono-Medium', monospace;
     font-weight: 500;
-    font-size: 1.5rem;
+    font-size: 28px;
     line-height: 36px;
     letter-spacing: -0.04em;
   }
@@ -76,7 +76,7 @@
   .text-t1 {
     font-family: 'JetBrainsMono-Regular', monospace;
     font-weight: 400;
-    font-size: 1rem;
+    font-size: 16px;
     line-height: 18px;
     letter-spacing: -0.04em;
   }
@@ -84,7 +84,7 @@
   .text-t2 {
     font-family: 'JetBrainsMono-Regular', monospace;
     font-weight: 400;
-    font-size: 0.875rem;
+    font-size: 14px;
     line-height: 16px;
     letter-spacing: -0.04em;
   }
@@ -118,4 +118,7 @@
 	.tabs-glyph {
 		@apply size-6;
 	}
+  .accent-color {
+    color: var(--color-app-accent);
+  }
 }

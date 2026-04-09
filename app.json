@@ -43,15 +43,7 @@
           }
         }
       ],
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "./assets/fonts/JetBrainsMono-Regular.ttf",
-            "./assets/fonts/JetBrainsMono-Medium.ttf"
-          ]
-        }
-      ],
+      
       "expo-web-browser"
     ],
     "experiments": {
