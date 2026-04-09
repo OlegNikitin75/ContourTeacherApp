@@ -1,56 +1,115 @@
-import { Tabs, TabSlot, TabTrigger } from 'expo-router/ui'
-import { View, Text, Pressable } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import clsx from 'clsx'
+import { Tabs, usePathname, useRouter } from 'expo-router'
+import { View, Text, Dimensions, TouchableOpacity } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { MotiView, AnimatePresence } from 'moti'
+import { HomeIcon, CoursesIcon, ScheduleIcon, SearchIcon } from '@/assets/icons/icons_svg_components'
+import { colors } from '@/constants/theme'
+import { BaseIcon } from '@/src/components/BaseIcon'
 
-// Импорт ваших SVG компонентов (уже как React компоненты)
-import { HomeSvgComponent as HomeIcon, CoursesSvgComponent as CoursesIcon, ScheduleSvgComponent as ScheduleIcon, SearchSvgComponent as SearchIcon } from '@/assets/icons/icons_svg_components'
+const { width } = Dimensions.get('window')
+
+const TABS = [
+	{ name: 'index', label: 'главная', icon: HomeIcon },
+	{ name: 'courses', label: 'курсы', icon: CoursesIcon },
+	{ name: 'schedule', label: 'расписание', icon: ScheduleIcon }
+]
 
 export default function TabLayout() {
+	const insets = useSafeAreaInsets()
+	const pathname = usePathname()
+	const router = useRouter()
+	const bottomPadding = Math.max(insets.bottom, 20)
+
 	return (
-		<SafeAreaView className='flex-1 bg-white' edges={['bottom']}>
-			<StatusBar style='dark' />
-
-			<Tabs className='flex-1'>
-				<TabSlot />
-
-				{/* Нижняя панель: табы слева, поиск отдельно справа */}
-				<View className='flex-row items-center justify-between px-6 py-3 bg-white border-t border-gray-100'>
-					{/* Табы (слева) */}
-					<View className='flex-row gap-6'>
-						<TabTrigger name='index' href='/'>
-							<TabButton Icon={HomeIcon} label='Главная' />
-						</TabTrigger>
-						<TabTrigger name='courses' href='/courses'>
-							<TabButton Icon={CoursesIcon} label='Курсы' />
-						</TabTrigger>
-						<TabTrigger name='schedule' href='/schedule'>
-							<TabButton Icon={ScheduleIcon} label='Расписание' />
-						</TabTrigger>
-					</View>
-
-					{/* Кнопка поиска (отдельно справа) */}
-					<Pressable onPress={() => console.log('Поиск открыт')} className='p-2 -mr-2'>
-						<SearchIcon width={24} height={24} color='#000000' />
-					</Pressable>
-				</View>
+		<View style={{ flex: 1, backgroundColor: colors.appLightGray }}>
+			<Tabs screenOptions={{ headerShown: false, tabBarStyle: { display: 'none' } }}>
+				<Tabs.Screen name='index' />
+				<Tabs.Screen name='courses' />
+				<Tabs.Screen name='schedule' />
 			</Tabs>
-		</SafeAreaView>
-	)
-}
 
-// Компонент кнопки таба
-function TabButton({ Icon, label, isFocused }) {
-	return (
-		<View className='items-center'>
-			{/* Белый круглый фон для активного таба */}
-			<View className={clsx('p-2 rounded-full transition-all duration-200', isFocused ? 'bg-white' : 'bg-transparent')}>
-				<Icon width={24} height={24} color={isFocused ? '#000000' : '#9CA3AF'} />
+			<View
+				style={{
+					position: 'absolute',
+					bottom: bottomPadding,
+					left: 16,
+					width: width * 0.69,
+					height: 64,
+					backgroundColor: colors.appBlack,
+					borderRadius: 35,
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					paddingHorizontal: 5
+				}}
+			>
+				{TABS.map(tab => {
+					const cleanPath = pathname === '/' ? 'index' : pathname.replace(/^\//, '')
+					const isFocused = cleanPath === tab.name || (tab.name === 'index' && cleanPath === '')
+					
+					return (
+						<TouchableOpacity
+							key={tab.name}
+							onPress={() => {
+								const target = tab.name === 'index' ? '/' : `/${tab.name}`
+								router.push(target as any)
+							}}
+							activeOpacity={0.7}
+							style={{ marginHorizontal: 4}} 
+						>
+							<MotiView
+							 key={`moti-${tab.name}-${isFocused}`} 
+								animate={{
+									backgroundColor: isFocused ? '#FFFFFF' : 'transparent',
+									paddingHorizontal: isFocused ? 10 : 7
+								}}
+								transition={{ type: 'timing', duration: 250 }}
+								style={{
+									flexDirection: 'row',
+									alignItems: 'center',
+									justifyContent: 'center',
+									height: 48,
+									borderRadius: 23
+								}}
+							>
+								<BaseIcon icon={tab.icon} color={isFocused ? colors.appBlack : colors.appGray}/>
+
+								<AnimatePresence>
+									{isFocused && (
+										<MotiView
+											from={{ opacity: 0, width: 0, marginLeft: 0 }}
+											animate={{ opacity: 1, width: 'auto', marginLeft: 2 }}
+											exit={{ opacity: 0, width: 0, marginLeft: 0 }}
+											style={{ overflow: 'hidden' }}
+										>
+											<Text numberOfLines={1} style={{ color: colors.appBlack, fontSize: 12,paddingBottom:5 }}>
+												{tab.label}
+											</Text>
+										</MotiView>
+									)}
+								</AnimatePresence>
+							</MotiView>
+						</TouchableOpacity>
+					)
+				})}
 			</View>
 
-			{/* Надпись только для активного таба */}
-			{isFocused && <Text className='text-xs font-medium text-black mt-1'>{label}</Text>}
+			<View style={{ position: 'absolute', bottom: bottomPadding, right: 16 }}>
+				<TouchableOpacity
+					activeOpacity={0.8}
+					style={{
+						width: 64,
+						height: 64,
+						borderRadius: 32,
+						backgroundColor: colors.appBlack,
+						alignItems: 'center',
+						justifyContent: 'center'
+					}}
+					onPress={() => console.log('Search')}
+				>
+					<BaseIcon icon={SearchIcon} color='white' size={26} />
+				</TouchableOpacity>
+			</View>
 		</View>
 	)
 }
