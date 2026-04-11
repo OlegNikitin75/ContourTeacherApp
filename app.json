@@ -14,6 +14,10 @@
         "tinted": "./assets/icons/ios-tinted.png"
       }
     },
+     "androidNavigationBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#ffffff"
+    },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#998FFB",
