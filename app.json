@@ -14,8 +14,11 @@
 				"tinted": "./assets/icons/ios-tinted.png"
 			}
 		},
+		
+  
 
 		"android": {
+			"softwareKeyboardLayoutMode": "resize",
 			"adaptiveIcon": {
 				"backgroundColor": "#998FFB",
 				"foregroundImage": "./assets/icons/adaptive-icon.png",

@@ -37,6 +37,7 @@
     font-size: 30px;
     line-height: 38px;
     letter-spacing: -0.04em;
+     text-transform: lowercase;
   }
   
   .text-h2 {
@@ -45,6 +46,7 @@
     font-size: 28px;
     line-height: 36px;
     letter-spacing: -0.04em;
+     text-transform: lowercase;
   }
   
   .text-h3 {
@@ -53,6 +55,7 @@
     font-size: 24px;
     line-height: 20px;
     letter-spacing: -0.04em;
+     text-transform: lowercase;
   }
   
   .text-t1 {
@@ -61,6 +64,7 @@
     font-size: 16px;
     line-height: 18px;
     letter-spacing: -0.04em;
+     text-transform: lowercase;
   }
   
   .text-t2 {
@@ -69,6 +73,7 @@
     font-size: 14px;
     line-height: 16px;
     letter-spacing: -0.04em;
+     text-transform: lowercase;
   }
   
   .text-l1 {
@@ -77,14 +82,24 @@
     font-size: 16px;
     line-height: 16px;
     letter-spacing: -0.04em;
+     text-transform: lowercase;
   }
   
   .text-l2 {
     font-family: 'JetBrainsMono-Medium', monospace;
     font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -0.04em;
+     text-transform: lowercase;
+  }
+   .text-l3 {
+    font-family: 'JetBrainsMono-Medium', monospace;
+    font-weight: 500;
     font-size: 12px;
     line-height: 18px;
     letter-spacing: -0.04em;
+    text-transform: lowercase;
   }
 }
 @layer components {
