@@ -52,7 +52,7 @@ export default function AppScreenAuthLayout({
 					style={{ paddingBottom: Math.max(insets.bottom, 42) }}
 				>
 					<Text className='text-app-black text-h3 text-center mb-4'>{title}</Text>
-					{subtitle && <Text className='text-app-gray text-base text-center mb-6 lowercase'>{subtitle}</Text>}
+					{subtitle && <Text className='text-app-gray text-t2 text-center mb-6 lowercase'>{subtitle}</Text>}
 					{children}
 					<View className='mb-6'>
 						{hrefBtn ? (

@@ -1,59 +1,61 @@
 {
-	"expo": {
-		"name": "ContourTeacherApp",
-		"slug": "ContourTeacherApp",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"icon": "./assets/images/icon.png",
-		"scheme": "contourteacherapp",
-		"userInterfaceStyle": "automatic",
-		"ios": {
-			"icon": {
-				"dark": "./assets/icons/ios-dark.png",
-				"light": "./assets/icons/ios-light.png",
-				"tinted": "./assets/icons/ios-tinted.png"
-			}
-		},
-		
-  
-
-		"android": {
-			"softwareKeyboardLayoutMode": "resize",
-			"adaptiveIcon": {
-				"backgroundColor": "#998FFB",
-				"foregroundImage": "./assets/icons/adaptive-icon.png",
-				"backgroundImage": "./assets/icons/adaptive-icon.png",
-				"monochromeImage": "./assets/icons/adaptive-icon.png"
-			},
-			"predictiveBackGestureEnabled": false
-		},
-		"web": {
-			"output": "static",
-			"favicon": "./assets/images/favicon.png"
-		},
-		"plugins": [
-			"expo-router",
-			[
-				"expo-splash-screen",
-				{
-					"backgroundColor": "#EAEAEA",
-					"android": {
-						"image": "./assets/icons/splash-icon-dark.png",
-						"imageWidth": 76
-					},
-					"dark": {
-						"backgroundColor": "#150D0B",
-						"image": "./assets/icons/splash-icon-light.png"
-					}
-				}
-			],
-			
-
-			"expo-web-browser"
-		],
-		"experiments": {
-			"typedRoutes": true,
-			"reactCompiler": true
-		}
-	}
+  "expo": {
+    "name": "ContourTeacherApp",
+    "slug": "ContourTeacherApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "contourteacherapp",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "icon": {
+        "dark": "./assets/icons/ios-dark.png",
+        "light": "./assets/icons/ios-light.png",
+        "tinted": "./assets/icons/ios-tinted.png"
+      }
+    },
+    "android": {
+      "softwareKeyboardLayoutMode": "resize",
+      "adaptiveIcon": {
+        "backgroundColor": "#998FFB",
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
+        "backgroundImage": "./assets/icons/adaptive-icon.png",
+        "monochromeImage": "./assets/icons/adaptive-icon.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.alexdev75.ContourTeacherApp"
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#EAEAEA",
+          "android": {
+            "image": "./assets/icons/splash-icon-dark.png",
+            "imageWidth": 76
+          },
+          "dark": {
+            "backgroundColor": "#150D0B",
+            "image": "./assets/icons/splash-icon-light.png"
+          }
+        }
+      ],
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5ba033fa-f5d8-4ad3-a4f0-640e8790cf29"
+      }
+    }
+  }
 }
