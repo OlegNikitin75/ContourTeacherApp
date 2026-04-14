@@ -1,29 +1,31 @@
 {
   "expo": {
-    "name": "ContourTeacherApp",
+    "name": "Контур|препод",
     "slug": "ContourTeacherApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "contourteacherapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
       "icon": {
         "dark": "./assets/icons/ios-dark.png",
         "light": "./assets/icons/ios-light.png",
         "tinted": "./assets/icons/ios-tinted.png"
-      }
+      },
+      "supportsTablet": true,
+      "bundleIdentifier": "com.alexdev75.ContourTeacherApp",
+      "userInterfaceStyle": "light"
     },
     "android": {
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "backgroundColor": "#998FFB",
-        "foregroundImage": "./assets/icons/adaptive-icon.png",
-        "backgroundImage": "./assets/icons/adaptive-icon.png",
-        "monochromeImage": "./assets/icons/adaptive-icon.png"
+        "foregroundImage": "./assets/icons/adaptive-icon.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.alexdev75.ContourTeacherApp"
+      "package": "com.alexdev75.ContourTeacherApp",
+      "userInterfaceStyle": "light"
     },
     "web": {
       "output": "static",
@@ -35,14 +37,9 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#EAEAEA",
-          "android": {
-            "image": "./assets/icons/splash-icon-dark.png",
-            "imageWidth": 76
-          },
-          "dark": {
-            "backgroundColor": "#150D0B",
-            "image": "./assets/icons/splash-icon-light.png"
-          }
+          "image": "./assets/icons/splash-icon-dark.png",
+          "imageWidth": 76,
+          "resizeMode": "contain"
         }
       ],
       "expo-web-browser"
@@ -59,3 +56,4 @@
     }
   }
 }
+
