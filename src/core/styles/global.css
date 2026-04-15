@@ -4,103 +4,111 @@
 
 @import 'nativewind/theme';
 @theme {
-	--color-app-black: #150D0B;
-	--color-app-light-gray: #EAEAEA;
+	--color-app-black: #150d0b;
+	--color-app-light-gray: #eaeaea;
 	--color-app-gray: #838383;
-	--color-app-dark-gray: #3F3F3F;
-	--color-app-white: #FFFFFF;
-	--color-app-accent: #998FFB;
-	--color-app-success: #366C52;
-	--color-app-error: #C93C3D;
-	--color-app-warning: #F8B32F;
+	--color-app-dark-gray: #3f3f3f;
+	--color-app-white: #ffffff;
+	--color-app-accent: #998ffb;
+	--color-app-success: #366c52;
+	--color-app-error: #c93c3d;
+	--color-app-warning: #f8b32f;
 
 	/* --corner-small: 8px;
 	--corner-medium: 24px;
 	--corner-large: 48px;
 	--corner-extra-large: 100px; */
-
-	
 }
 
 @layer utilities {
-  .font-jetbrains-mono {
-    font-family: 'JetBrainsMono-Regular', monospace;
-  }
-  
-  .font-jetbrains-mono-medium {
-    font-family: 'JetBrainsMono-Medium', monospace;
-  }
+	.font-jetbrains-mono {
+		font-family: 'JetBrainsMono-Regular', monospace;
+	}
 
-   .text-h1 {
-    font-family: 'JetBrainsMono-Medium', monospace;
-    font-weight: 500;
-    font-size: 30px;
-    line-height: 38px;
-    letter-spacing: -0.04em;
-     text-transform: lowercase;
-  }
-  
-  .text-h2 {
-    font-family: 'JetBrainsMono-Medium', monospace;
-    font-weight: 500;
-    font-size: 28px;
-    line-height: 36px;
-    letter-spacing: -0.04em;
-     text-transform: lowercase;
-  }
-  
-  .text-h3 {
-    font-family: 'JetBrainsMono-Medium', monospace;
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 20px;
-    letter-spacing: -0.04em;
-     text-transform: lowercase;
-  }
-  
-  .text-t1 {
-    font-family: 'JetBrainsMono-Regular', monospace;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 18px;
-    letter-spacing: -0.04em;
-     text-transform: lowercase;
-  }
-  
-  .text-t2 {
-    font-family: 'JetBrainsMono-Regular', monospace;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 16px;
-    letter-spacing: -0.04em;
-     text-transform: lowercase;
-  }
-  
-  .text-l1 {
-    font-family: 'JetBrainsMono-Medium', monospace;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 16px;
-    letter-spacing: -0.04em;
-     text-transform: lowercase;
-  }
-  
-  .text-l2 {
-    font-family: 'JetBrainsMono-Medium', monospace;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 18px;
-    letter-spacing: -0.04em;
-     text-transform: lowercase;
-  }
-   .text-l3 {
-    font-family: 'JetBrainsMono-Medium', monospace;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 18px;
-    letter-spacing: -0.04em;
-    text-transform: lowercase;
-  }
+	.font-jetbrains-mono-medium {
+		font-family: 'JetBrainsMono-Medium', monospace;
+	}
+
+	.text-h1 {
+		font-family: 'JetBrainsMono-Medium', monospace;
+		font-weight: 500;
+		font-size: 30px;
+		line-height: 38px;
+		letter-spacing: -0.04em;
+		text-transform: lowercase;
+	}
+
+	.text-h2 {
+		font-family: 'JetBrainsMono-Medium', monospace;
+		font-weight: 500;
+		font-size: 28px;
+		line-height: 36px;
+		letter-spacing: -0.04em;
+		text-transform: lowercase;
+	}
+
+	.text-h3 {
+		font-family: 'JetBrainsMono-Medium', monospace;
+		font-weight: 500;
+		font-size: 24px;
+		line-height: 20px;
+		letter-spacing: -0.04em;
+		text-transform: lowercase;
+	
+	
+	}
+	.text-h4 {
+		font-family: 'JetBrainsMono-Medium', monospace;
+		font-weight: 500;
+		font-size: 16px;
+		line-height: 20px;
+		letter-spacing: -0.04em;
+		text-transform: lowercase;
+	}
+
+	.text-t1 {
+		font-family: 'JetBrainsMono-Regular', monospace;
+		font-weight: 400;
+		font-size: 16px;
+		line-height: 18px;
+		letter-spacing: -0.04em;
+		text-transform: lowercase;
+	}
+
+	.text-t2 {
+		font-family: 'JetBrainsMono-Regular', monospace;
+		font-weight: 400;
+		font-size: 14px;
+		line-height: 16px;
+		letter-spacing: -0.04em;
+		text-transform: lowercase;
+	}
+
+	.text-l1 {
+		font-family: 'JetBrainsMono-Medium', monospace;
+		font-weight: 500;
+		font-size: 16px;
+		line-height: 16px;
+		letter-spacing: -0.04em;
+		text-transform: lowercase;
+	}
+
+	.text-l2 {
+		font-family: 'JetBrainsMono-Medium', monospace;
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 18px;
+		letter-spacing: -0.04em;
+		text-transform: lowercase;
+	}
+	.text-l3 {
+		font-family: 'JetBrainsMono-Medium', monospace;
+		font-weight: 500;
+		font-size: 12px;
+		line-height: 18px;
+		letter-spacing: -0.04em;
+		text-transform: lowercase;
+	}
 }
 @layer components {
 	.tabs-icon {
@@ -115,7 +123,7 @@
 	.tabs-glyph {
 		@apply size-6;
 	}
-  .accent-color {
-    color: var(--color-app-accent);
-  }
+	.accent-color {
+		color: var(--color-app-accent);
+	}
 }

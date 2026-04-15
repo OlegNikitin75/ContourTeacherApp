@@ -35,13 +35,13 @@ export default function AnimatedSplashScreen({ onFinish }: AnimatedSplashScreenP
 		<View className='flex-1 justify-center items-center bg-app-light-gray'>
 			<View className='flex-row items-center'>
 				<View className='overflow-hidden'>
-					<Animated.Text style={leftTextStyle} className='text-h2 text-black'>
+					<Animated.Text style={leftTextStyle} className='text-h2 text-app-black'>
 						контур
 					</Animated.Text>
 				</View>
 				<View className='w-[2.5px] h-8 bg-black rounded-full mx-2.5' />
 				<View className='overflow-hidden'>
-					<Animated.Text style={rightTextStyle} className='text-h2 text-black'>
+					<Animated.Text style={rightTextStyle} className='text-h2 text-app-accent'>
 						препод
 					</Animated.Text>
 				</View>

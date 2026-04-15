@@ -67,7 +67,7 @@ export default function RootLayout() {
 		const inAuthGroup = currentSegments.includes('(auth)')
 
 		if (!session) {
-			if (!inAuthGroup) router.replace('/(auth)/intro')
+			if (!inAuthGroup) router.replace('/(auth)/signup')//intro
 		} else if (isComplete === false) {
 			// Теперь здесь ошибки не будет
 			const isFillingProfile = currentSegments.includes('profile-fill') || currentSegments.includes('access-code')

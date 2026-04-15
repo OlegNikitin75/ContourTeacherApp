@@ -48,11 +48,13 @@ export default function AppScreenAuthLayout({
 					<View className='h-2.5' />
 				)}
 				<View
-					className={clsx('bg-app-white w-full px-6 pt-6 rounded-t-4xl', !sourceImg && 'flex-1')}
+					className={clsx('bg-app-white w-full px-4 pt-6 rounded-t-4xl', !sourceImg && 'flex-1')}
 					style={{ paddingBottom: Math.max(insets.bottom, 42) }}
 				>
-					<Text className='text-app-black text-h3 text-center mb-4'>{title}</Text>
-					{subtitle && <Text className='text-app-gray text-t2 text-center mb-6 lowercase'>{subtitle}</Text>}
+					<Text className='text-app-black text-h3 text-center mb-4'>
+						{title}
+					</Text>
+					{subtitle && <Text className='text-app-gray text-t2 text-center mb-6 '>{subtitle}</Text>}
 					{children}
 					<View className='mb-6'>
 						{hrefBtn ? (

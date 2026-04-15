@@ -3,6 +3,7 @@ export const ROUTES = {
 	ACCESS_CODE: '/access-code',
 	SIGNIN: '/signin',
 	SIGNUP: '/signup',
+	PROFILE_FILL:'/profile-fill',
 	// Динамические пути
 	USER_DETAILS: (id: string | number) => `/user/${id}`
 } as const

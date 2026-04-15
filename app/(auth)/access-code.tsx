@@ -12,14 +12,17 @@ export default function AccessCode() {
 	const router = useRouter()
 
 	const verify = async (codeToVerify?: string) => {
+		console.log('ПОПЫТКА ПРОВЕРКИ КОДА:', codeToVerify || code.join(''));
 		const fullCode = codeToVerify || code.join('')
 		if (fullCode.length < 4) return Alert.alert('ошибка', 'введите полный код')
 
 		Keyboard.dismiss()
 
-		const { data: isValid } = await supabase.rpc('verify_and_consume_code', {
+		const { data: isValid, error } = await supabase.rpc('verify_and_consume_code', {
 			input_code: fullCode
 		})
+		console.log('РЕЗУЛЬТАТ ИЗ БАЗЫ:', isValid);
+if (error) console.log('ОШИБКА SUPABASE:', error);
 
 		if (isValid) {
 			router.push({ pathname: '/(auth)/signup', params: { verified: 'true' } })

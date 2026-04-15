@@ -1,4 +1,4 @@
-import { IconContent } from '@/src/components/BaseIcon'
+import { IconContent } from '@/shared/components/BaseIcon'
 import { Path } from 'react-native-svg'
 export const CoursesIcon: IconContent = () => (
 	<>
