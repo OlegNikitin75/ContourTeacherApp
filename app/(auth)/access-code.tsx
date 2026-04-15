@@ -1,9 +1,9 @@
-import { supabase } from '@/lib/supabase'
-import AppScreenAuthLayout from '@/src/components/AppScreenAuthLayout'
-import { useRouter } from 'expo-router'
 import { useState, useRef } from 'react'
 import { Alert, TextInput, View, Keyboard } from 'react-native'
 import { styled } from 'nativewind'
+import { useRouter } from 'expo-router'
+import { supabase } from '@/core/lib/supabase'
+import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
 const StyledInput = styled(TextInput)
 
 export default function AccessCode() {

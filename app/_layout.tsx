@@ -6,9 +6,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { useFonts, JetBrainsMono_400Regular, JetBrainsMono_500Medium } from '@expo-google-fonts/jetbrains-mono'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { supabase } from '@/lib/supabase'
 import { Session } from '@supabase/supabase-js'
-import AnimatedSplashScreen from '../shared/components/AnimatedSplashScreen'
+import AnimatedSplashScreen from '../src/shared/components/AnimatedSplashScreen'
+import { supabase } from '../src/core/lib/supabase'
 
 
 SplashScreen.preventAutoHideAsync()

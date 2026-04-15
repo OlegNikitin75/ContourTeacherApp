@@ -1,7 +1,6 @@
-import { colors } from '@/constants/theme'
-import HeaderTitle from '@/src/components/HeaderTitle'
-import { View, Text } from 'react-native'
+import HeaderTitle from '@/shared/components/HeaderTitle'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { View, Text } from 'react-native'
 
 export default function Courses() {
 	return (

@@ -3,9 +3,8 @@ import { View, Text, Dimensions, TouchableOpacity } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { MotiView, AnimatePresence } from 'moti'
 import { HomeIcon, CoursesIcon, ScheduleIcon, SearchIcon } from '@/assets/icons/icons_svg_components'
-import { colors } from '@/constants/theme'
-import { BaseIcon } from '@/src/components/BaseIcon'
-
+import { BaseIcon } from '@/shared/components/BaseIcon'
+import { colors } from '@/core/constants/theme'
 const { width } = Dimensions.get('window')
 
 const TABS = [

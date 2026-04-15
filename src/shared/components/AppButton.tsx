@@ -1,4 +1,4 @@
-import { colors } from '@/constants/theme'
+import { colors } from '@/core/constants/theme'
 import { Href, useRouter } from 'expo-router'
 import React from 'react'
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native'

@@ -7,11 +7,12 @@ export default function AuthLayout() {
 				headerShown: false
 			}}
 		>
-			<Stack.Screen name='signin' />
-			<Stack.Screen name='signup' />
 			<Stack.Screen name='intro' />
-			<Stack.Screen name='profile-fill' />
 			<Stack.Screen name='access-code' />
+			<Stack.Screen name='signup' />
+			<Stack.Screen name='profile-fill' />
+			<Stack.Screen name='signin' />
+			
 		</Stack>
 	)
 }

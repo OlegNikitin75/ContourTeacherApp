@@ -1,10 +1,11 @@
-import { ROUTES } from '@/lib/routes'
-import AppScreenAuthLayout from '@/src/components/AppScreenAuthLayout'
+import { IMAGES } from '@/assets'
+import { ROUTES } from '@/core/lib/routes'
+import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
 
 export default function Intro() {
 	return (
 		<AppScreenAuthLayout
-			sourceImg={require('../../../assets/images/appImages/intro_image.png')}
+			sourceImg={IMAGES.IntroBG}
 			title={'удобный помощник\nв вашем телефоне'}
 			titleBtn='зарегистрироваться'
 			bottomText='уже есть аккаунт?'
