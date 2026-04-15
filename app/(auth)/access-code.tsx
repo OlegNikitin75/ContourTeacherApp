@@ -10,34 +10,41 @@ export default function AccessCode() {
 	const [code, setCode] = useState(['', '', '', ''])
 	const inputs = useRef<TextInput[]>([])
 	const router = useRouter()
+	const [loading, setLoading] = useState(false)
+
 
 	const verify = async (codeToVerify?: string) => {
-		console.log('ПОПЫТКА ПРОВЕРКИ КОДА:', codeToVerify || code.join(''));
-		const fullCode = codeToVerify || code.join('')
-		if (fullCode.length < 4) return Alert.alert('ошибка', 'введите полный код')
+    const fullCode = codeToVerify || code.join('')
+    if (fullCode.length < 4) return Alert.alert('ошибка', 'введите полный код')
 
-		Keyboard.dismiss()
+    try {
+        setLoading(true) // Включаем загрузку
+        Keyboard.dismiss()
 
-		const { data: isValid, error } = await supabase.rpc('verify_and_consume_code', {
-			input_code: fullCode
-		})
-		console.log('РЕЗУЛЬТАТ ИЗ БАЗЫ:', isValid);
-if (error) console.log('ОШИБКА SUPABASE:', error);
+        const { data: isValid, error } = await supabase.rpc('verify_and_consume_code', {
+            input_code: fullCode
+        })
 
-		if (isValid) {
-			router.push({ pathname: '/(auth)/signup', params: { verified: 'true' } })
-		} else {
-			Alert.alert('ошибка', 'код недействителен', [
-				{
-					text: 'ОК',
-					onPress: () => {
-						setCode(['', '', '', ''])
-						setTimeout(() => inputs.current[0]?.focus(), 100)
-					}
-				}
-			])
-		}
-	}
+        if (isValid) {
+            router.push({ pathname: '/(auth)/signup', params: { verified: 'true' } })
+        } else {
+            Alert.alert('ошибка', 'код недействителен', [
+                {
+                    text: 'ОК',
+                    onPress: () => {
+                        setCode(['', '', '', ''])
+                        setTimeout(() => inputs.current[0]?.focus(), 100)
+                    }
+                }
+            ])
+        }
+    } catch (e) {
+        Alert.alert('Ошибка', 'Что-то пошло не так')
+    } finally {
+        setLoading(false) // Выключаем загрузку в любом случае
+    }
+}
+
 
 	const handleChange = (text: string, index: number) => {
 		const char = text.slice(-1)
@@ -67,6 +74,7 @@ if (error) console.log('ОШИБКА SUPABASE:', error);
 			subtitle='Админ кафедры выдал вам уникальный код для доступа'
 			titleBtn='проверить код'
 			actionBtn={() => verify()}
+			isLoading={loading} 
 			sourceImg={0}
 		>
 			<View className='flex-row justify-center items-center gap-3 mb-6'>

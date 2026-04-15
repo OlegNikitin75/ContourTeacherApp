@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Session } from '@supabase/supabase-js'
 import AnimatedSplashScreen from '../src/shared/components/AnimatedSplashScreen'
 import { supabase } from '../src/core/lib/supabase'
+import { ROUTES } from '@/core/lib/routes'
 
 
 SplashScreen.preventAutoHideAsync()
@@ -67,11 +68,10 @@ export default function RootLayout() {
 		const inAuthGroup = currentSegments.includes('(auth)')
 
 		if (!session) {
-			if (!inAuthGroup) router.replace('/(auth)/signup')//intro
+			if (!inAuthGroup) router.replace(`/(auth)/${ROUTES.INTRO}`)
 		} else if (isComplete === false) {
-			// Теперь здесь ошибки не будет
 			const isFillingProfile = currentSegments.includes('profile-fill') || currentSegments.includes('access-code')
-			if (!isFillingProfile) router.replace('/(auth)/access-code')
+			if (!isFillingProfile) router.replace(`/(auth)/${ROUTES.ACCESS_CODE}`)
 		} else if (isComplete === true && inAuthGroup) {
 			router.replace('/(tabs)')
 		}

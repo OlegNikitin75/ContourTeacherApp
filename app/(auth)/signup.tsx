@@ -1,24 +1,18 @@
-import { EyeHiddenIcon } from '@/assets/icons/icons_svg_components'
+import { EyeHiddenIcon, EyeShownIcon } from '@/assets/icons/icons_svg_components'
 import { ROUTES } from '@/core/lib/routes'
 import { authService } from '@/features/auth/api/auth.service'
 import { AppInput } from '@/shared/components/AppInput'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
 import { router } from 'expo-router'
 import { useState } from 'react'
-import {
-	KeyboardAvoidingView,
-	Platform,
-	ScrollView,
-	TouchableWithoutFeedback,
-	Keyboard,
-	View,
-	Alert
-} from 'react-native'
+import { View, Alert } from 'react-native'
 
 export default function SignupScreen() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [confirmPassword, setConfirmPassword] = useState('')
+	const [showPassword, setShowPassword] = useState(false)
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 	const [loading, setLoading] = useState(false)
 	const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
@@ -68,56 +62,43 @@ export default function SignupScreen() {
 
 	return (
 		<AppScreenAuthLayout
-			title='Добро пожаловать в Контур'
+			title='Добро пожаловать в Контур'
 			titleBtn={loading ? 'регистрация...' : 'зарегистрироваться'}
 			actionBtn={handleSignup}
+			isLoading={loading} 
 			bottomText='уже есть аккаунт?'
 			bottomLinkText='войти'
 			hrefLink={ROUTES.SIGNIN}
 		>
-			<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className='flex-1'>
-				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-					<ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps='handled'>
-						<View className='flex-1 gap-y-4 py-6'>
-							<AppInput
-								label='ваш емейл'
-								placeholder='hello@contour.com'
-								value={email}
-								onChangeText={val => {
-									setEmail(val)
-									setErrors({ ...errors, email: '' })
-								}}
-								error={errors.email}
-								autoCapitalize='none'
-							/>
-							<AppInput
-								label='ваш пароль'
-								placeholder='минимум 6 символов'
-								value={password}
-								onChangeText={val => {
-									setPassword(val)
-									setErrors({ ...errors, password: '' })
-								}}
-								error={errors.password}
-								icon={EyeHiddenIcon}
-								secureTextEntry
-							/>
-							<AppInput
-								label='повторите ваш пароль'
-								placeholder='******'
-								value={confirmPassword}
-								onChangeText={val => {
-									setConfirmPassword(val)
-									setErrors({ ...errors, confirmPassword: '' })
-								}}
-								error={errors.confirmPassword}
-								icon={EyeHiddenIcon}
-								secureTextEntry
-							/>
-						</View>
-					</ScrollView>
-				</TouchableWithoutFeedback>
-			</KeyboardAvoidingView>
+			<View className='gap-y-4'>
+				<AppInput
+					label='ваш емейл'
+					placeholder='hello@contour.com'
+					value={email}
+					onChangeText={setEmail}
+					error={errors.email}
+				/>
+				<AppInput
+					label='ваш пароль'
+					placeholder='минимум 6 символов'
+					value={password}
+					onChangeText={setPassword}
+					icon={showPassword ? EyeShownIcon : EyeHiddenIcon}
+					onIconPress={() => setShowPassword(!showPassword)}
+					secureTextEntry={!showPassword}
+					error={errors.password}
+				/>
+				<AppInput
+					label='повторите ваш пароль'
+					placeholder='******'
+					value={confirmPassword}
+					onChangeText={setConfirmPassword}
+					icon={showConfirmPassword ? EyeShownIcon : EyeHiddenIcon}
+					onIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
+					secureTextEntry={!showConfirmPassword}
+					error={errors.confirmPassword}
+				/>
+			</View>
 		</AppScreenAuthLayout>
 	)
 }

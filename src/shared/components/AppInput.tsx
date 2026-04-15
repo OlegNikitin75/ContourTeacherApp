@@ -1,15 +1,16 @@
 import { colors } from '@/core/constants/theme'
-import React, { ComponentType, useState } from 'react'
-import { View, Text, TextInput, TextInputProps } from 'react-native'
-import { SvgProps } from 'react-native-svg'
+import React, { useState } from 'react'
+import { View, Text, TextInput, TextInputProps, TouchableOpacity } from 'react-native'
+import { BaseIcon, IconContent } from './BaseIcon'
 
 interface AppInputProps extends TextInputProps {
 	label?: string
 	error?: string
-	icon?: ComponentType<SvgProps>
+	icon?: IconContent
+	onIconPress?: () => void
 }
 
-export const AppInput = ({ label, error, icon: Icon, ...props }: AppInputProps) => {
+export const AppInput = ({ label, error, icon: Icon, onIconPress, ...props }: AppInputProps) => {
 	const [isFocused, setIsFocused] = useState(false)
 
 	return (
@@ -32,9 +33,9 @@ export const AppInput = ({ label, error, icon: Icon, ...props }: AppInputProps) 
 				/>
 
 				{Icon && (
-					<View className='ml-2 bg-amber-600'>
-						<Icon width={24} height={24} />
-					</View>
+					<TouchableOpacity onPress={onIconPress} className='ml-2 p-1'>
+						<BaseIcon icon={Icon} />
+					</TouchableOpacity>
 				)}
 			</View>
 
