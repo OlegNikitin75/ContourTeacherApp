@@ -63,7 +63,7 @@ export default function SignupScreen() {
 	return (
 		<AppScreenAuthLayout
 			title='Добро пожаловать в Контур'
-			titleBtn={loading ? 'регистрация...' : 'зарегистрироваться'}
+			titleBtn='зарегистрироваться'
 			actionBtn={handleSignup}
 			isLoading={loading} 
 			bottomText='уже есть аккаунт?'
