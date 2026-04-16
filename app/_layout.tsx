@@ -11,7 +11,6 @@ import AnimatedSplashScreen from '../src/shared/components/AnimatedSplashScreen'
 import { supabase } from '../src/core/lib/supabase'
 import { ROUTES } from '@/core/lib/routes'
 
-
 SplashScreen.preventAutoHideAsync()
 const queryClient = new QueryClient()
 
@@ -29,7 +28,13 @@ export default function RootLayout() {
 		'JetBrainsMono-Medium': JetBrainsMono_500Medium
 	})
 
-	// 1. Загрузка данных
+	// Функция обновления статуса профиля
+	const refreshProfileStatus = async (userId: string) => {
+		const { data } = await supabase.from('profiles').select('is_complete').eq('id', userId).single()
+		setIsComplete(data?.is_complete ?? false)
+	}
+
+	// 1. Инициализация и отслеживание Auth
 	useEffect(() => {
 		const prepare = async () => {
 			const {
@@ -37,50 +42,56 @@ export default function RootLayout() {
 			} = await supabase.auth.getSession()
 			setSession(session)
 			if (session) {
-				const { data } = await supabase.from('profiles').select('is_complete').eq('id', session.user.id).single()
-				setIsComplete(data?.is_complete ?? false)
+				await refreshProfileStatus(session.user.id)
 			}
 			setInitialized(true)
 		}
 		prepare()
 
-		const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-			setSession(session)
-			if (session) {
-				supabase
-					.from('profiles')
-					.select('is_complete')
-					.eq('id', session.user.id)
-					.single()
-					.then(({ data }) => setIsComplete(data?.is_complete ?? false))
+		const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
+			setSession(currentSession)
+			if (currentSession) {
+				await refreshProfileStatus(currentSession.user.id)
+			} else {
+				setIsComplete(null) // Сбрасываем при выходе
 			}
 		})
+
 		return () => authListener.subscription.unsubscribe()
 	}, [])
 
-	// 2. Навигация (срабатывает только когда контент готов к показу)
+	// 2. Навигационная логика
 	useEffect(() => {
+		// Не делаем редирект, пока не прошли сплэш или не загрузили данные
 		if (!showContent || !initialized) return
 
-		// Принудительно приводим к массиву строк, чтобы TS не ругался на "never"
 		const currentSegments = segments as string[]
-
 		const inAuthGroup = currentSegments.includes('(auth)')
 
 		if (!session) {
-			if (!inAuthGroup) router.replace(`/(auth)/${ROUTES.INTRO}`)
-		} else if (isComplete === false) {
-			const isFillingProfile = currentSegments.includes('profile-fill') || currentSegments.includes('access-code')
-			if (!isFillingProfile) router.replace(`/(auth)/${ROUTES.ACCESS_CODE}`)
-		} else if (isComplete === true && inAuthGroup) {
-			router.replace('/(tabs)')
+			// Если нет сессии и мы не в auth-группе — на Intro
+			if (!inAuthGroup) {
+				router.replace(`/(auth)${ROUTES.INTRO}`)
+			}
+		} else {
+			// Если сессия есть, проверяем заполненность профиля
+			if (isComplete === false) {
+				const isOnFillingScreens = currentSegments.includes('profile-fill') || currentSegments.includes('access-code')
+
+				if (!isOnFillingScreens) {
+					router.replace(`/(auth)${ROUTES.PROFILE_FILL}`)
+				}
+			} else if (isComplete === true) {
+				// Если профиль готов, а мы всё еще в auth — уходим в табы
+				if (inAuthGroup) {
+					router.replace('/(tabs)')
+				}
+			}
 		}
 	}, [session, isComplete, showContent, initialized, segments])
 
-	// Если шрифты или данные еще не готовы — держим системный сплэш
 	if (!fontsLoaded || !initialized) return null
 
-	// Если данные готовы, но мы еще "крутим" красивую анимацию
 	if (!showContent) {
 		return (
 			<AnimatedSplashScreen

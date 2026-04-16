@@ -5,16 +5,16 @@ import { AppInput } from '@/shared/components/AppInput'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { View, Alert, Text } from 'react-native'
+import { View, Alert} from 'react-native'
 import { departments, positions } from '@/core/constants/data'
-import { colors } from '@/core/constants/theme'
+import AppDropdown from '@/shared/components/AppDropdown'
 
 export default function ProfileFillScreen() {
 	const [firstName, setFirstName] = useState('')
 	const [middleName, setMiddleName] = useState('')
 	const [lastName, setLastName] = useState('')
-	const [position, setPosition] = useState(null)
-	const [department, setDepartment] = useState(null)
+	const [position, setPosition] = useState<string | null>(null)
+	const [department, setDepartment] = useState<string | null>(null)
 	const [loading, setLoading] = useState(false)
 	const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
@@ -40,91 +40,67 @@ export default function ProfileFillScreen() {
 
 	const handleSignup = async () => {
 		if (!validate()) return
-
 		try {
 			setLoading(true)
-			const data = await authService.signUp(email, password)
-
-			if (data) {
-				router.replace(`/(auth)/${ROUTES.PROFILE_FILL}`)
-			}
+			await authService.completeProfile(firstName, lastName, middleName, position!, department!)
+			router.replace(`/(tabs)/${ROUTES.HOME}`)
 		} catch (error: any) {
-			if (error.message?.includes('registered')) {
-				setErrors({ email: 'Этот email уже занят' })
-			} else {
-				Alert.alert('Ошибка', error.message)
-			}
+			Alert.alert('Ошибка', error.message || 'Не удалось сохранить профиль')
 		} finally {
 			setLoading(false)
 		}
 	}
 
-	return (
-		<AppScreenAuthLayout
-			title='расскажите немного о себе'
-			titleBtn='завершить'
-			actionBtn={handleSignup}
-			isLoading={loading}
-		>
-			<View className='gap-y-4'>
-				<AppInput
-					label='ваша фамилия'
-					placeholder='круглов'
-					value={lastName}
-					onChangeText={setLastName}
-					error={errors.lastName}
-				/>
-				<AppInput
-					label='ваше имя'
-					placeholder='контур'
-					value={firstName}
-					onChangeText={setFirstName}
-					error={errors.firstName}
-				/>
-				<AppInput
-					label='ваше отчество'
-					placeholder='чертежевич'
-					value={middleName}
-					onChangeText={setMiddleName}
-					error={errors.middleName}
-				/>
-				<View className='w-full mb-4'>
-						<Text className='text-h4 text-app-black mb-3'>ваша должность</Text>
-					<Dropdown
-						style={{
-							height: 56,
-							backgroundColor: colors.appLightGray,
-							borderColor: 'gray',
-							borderWidth: 1,
-							borderRadius: 8,
-							paddingHorizontal: 20,
-							paddingVertical: 8
+		return (
+			<AppScreenAuthLayout
+				title='расскажите немного о себе'
+				titleBtn='завершить'
+				actionBtn={handleSignup}
+				isLoading={loading}
+			>
+				<View className='gap-y-4'>
+					<AppInput
+						label='ваша фамилия'
+						placeholder='круглов'
+						value={lastName}
+						onChangeText={setLastName}
+						error={errors.lastName}
+					/>
+					<AppInput
+						label='ваше имя'
+						placeholder='контур'
+						value={firstName}
+						onChangeText={setFirstName}
+						error={errors.firstName}
+					/>
+					<AppInput
+						label='ваше отчество'
+						placeholder='чертежевич'
+						value={middleName}
+						onChangeText={setMiddleName}
+						error={errors.middleName}
+					/>
+					<AppDropdown
+						label='Ваша должность'
+						placeholder='Руководитель отдела кругов'
+						onChange={position => {
+							setPosition(position)
 						}}
-					
-						placeholderStyle={{
-							fontSize: 16,
-							color: colors.appGray
-						}}
-						selectedTextStyle={{
-							fontSize: 16,
-							color: colors.appBlack
-						}}
-						itemTextStyle={{
-							fontSize: 16,
-							color: colors.appBlack
-						}}
+						error={!position ? 'Выберите вашу должность' : undefined}
 						data={positions}
-						labelField='label'
-						valueField='value'
-						placeholder='Выберите подразделение'
 						value={position}
-						onChange={item => {
-							setPosition(item.value)
+					/>
+					<AppDropdown
+						label='Ваше подразделение'
+						placeholder='Отдел кругов'
+						onChange={department => {
+							setDepartment(department)
 						}}
+						error={!position ? 'Выберите ваше подразделение' : undefined}
+						data={departments}
+						value={department}
 					/>
 				</View>
-				);
-			</View>
-		</AppScreenAuthLayout>
-	)
-}
+			</AppScreenAuthLayout>
+		)
+	}

@@ -46,8 +46,10 @@ export default function SignupScreen() {
 			setLoading(true)
 			const data = await authService.signUp(email, password)
 
-			if (data) {
-				router.replace(`/(auth)/${ROUTES.PROFILE_FILL}`)
+			if (data?.session) {
+				router.replace(ROUTES.PROFILE_FILL) 
+			} else {
+				Alert.alert('Успех', 'Подтвердите почту для входа')
 			}
 		} catch (error: any) {
 			if (error.message?.includes('registered')) {
@@ -65,7 +67,7 @@ export default function SignupScreen() {
 			title='Добро пожаловать в Контур'
 			titleBtn='зарегистрироваться'
 			actionBtn={handleSignup}
-			isLoading={loading} 
+			isLoading={loading}
 			bottomText='уже есть аккаунт?'
 			bottomLinkText='войти'
 			hrefLink={ROUTES.SIGNIN}

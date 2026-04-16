@@ -4,6 +4,7 @@ import { styled } from 'nativewind'
 import { useRouter } from 'expo-router'
 import { supabase } from '@/core/lib/supabase'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
+import { ROUTES } from '@/core/lib/routes'
 const StyledInput = styled(TextInput)
 
 export default function AccessCode() {
@@ -12,39 +13,40 @@ export default function AccessCode() {
 	const router = useRouter()
 	const [loading, setLoading] = useState(false)
 
-
 	const verify = async (codeToVerify?: string) => {
-    const fullCode = codeToVerify || code.join('')
-    if (fullCode.length < 4) return Alert.alert('ошибка', 'введите полный код')
+		const fullCode = codeToVerify || code.join('')
+		if (fullCode.length < 4) return Alert.alert('ошибка', 'введите полный код')
 
-    try {
-        setLoading(true) // Включаем загрузку
-        Keyboard.dismiss()
+		try {
+			setLoading(true) // Включаем загрузку
+			Keyboard.dismiss()
 
-        const { data: isValid, error } = await supabase.rpc('verify_and_consume_code', {
-            input_code: fullCode
-        })
+			const { data: isValid } = await supabase.rpc('verify_and_consume_code', {
+				input_code: fullCode
+			})
 
-        if (isValid) {
-            router.push({ pathname: '/(auth)/signup', params: { verified: 'true' } })
-        } else {
-            Alert.alert('ошибка', 'код недействителен', [
-                {
-                    text: 'ОК',
-                    onPress: () => {
-                        setCode(['', '', '', ''])
-                        setTimeout(() => inputs.current[0]?.focus(), 100)
-                    }
-                }
-            ])
-        }
-    } catch (e) {
-        Alert.alert('Ошибка', 'Что-то пошло не так')
-    } finally {
-        setLoading(false) // Выключаем загрузку в любом случае
-    }
-}
-
+			if (isValid) {
+			router.push({ 
+        pathname: `/(auth)${ROUTES.SIGNUP}`, 
+        params: { verified: 'true' } 
+    })
+			} else {
+				Alert.alert('ошибка', 'код недействителен', [
+					{
+						text: 'ОК',
+						onPress: () => {
+							setCode(['', '', '', ''])
+							setTimeout(() => inputs.current[0]?.focus(), 100)
+						}
+					}
+				])
+			}
+		} catch (e) {
+			Alert.alert('Ошибка', 'Что-то пошло не так')
+		} finally {
+			setLoading(false)
+		}
+	}
 
 	const handleChange = (text: string, index: number) => {
 		const char = text.slice(-1)
@@ -74,7 +76,7 @@ export default function AccessCode() {
 			subtitle='Админ кафедры выдал вам уникальный код для доступа'
 			titleBtn='проверить код'
 			actionBtn={() => verify()}
-			isLoading={loading} 
+			isLoading={loading}
 			sourceImg={0}
 		>
 			<View className='flex-row justify-center items-center gap-3 mb-6'>

@@ -28,8 +28,10 @@ export const AppInput = ({ label, error, icon: Icon, onIconPress, ...props }: Ap
 					{...props}
 					onFocus={() => setIsFocused(true)}
 					onBlur={() => setIsFocused(false)}
-					className='text-app-black text-l1 flex-1'
+					className='text-app-black text-base font-jetbrains-mono-medium flex-1'
 					placeholderTextColor={colors.appGray}
+					autoCapitalize='none'
+					autoCorrect={false}
 				/>
 
 				{Icon && (
