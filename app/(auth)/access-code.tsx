@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router'
 import { supabase } from '@/core/lib/supabase'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
 import { ROUTES } from '@/core/lib/routes'
+import AppAlert from '@/shared/components/AppAlert'
 const StyledInput = styled(TextInput)
 
 export default function AccessCode() {
@@ -12,13 +13,29 @@ export default function AccessCode() {
 	const inputs = useRef<TextInput[]>([])
 	const router = useRouter()
 	const [loading, setLoading] = useState(false)
+	const [alertVisible, setAlertVisible] = useState({
+		visible: false,
+		title: '',
+		message: ''
+	})
+
+	const showAlert = (title: string, message: string) => {
+		setAlertVisible({
+			visible: true,
+			title,
+			message
+		})
+	}
 
 	const verify = async (codeToVerify?: string) => {
 		const fullCode = codeToVerify || code.join('')
-		if (fullCode.length < 4) return Alert.alert('ошибка', 'введите полный код')
+		if (fullCode.length < 4) {
+			showAlert('Ошибка', 'введите полный код')
+			return
+		}
 
 		try {
-			setLoading(true) // Включаем загрузку
+			setLoading(true)
 			Keyboard.dismiss()
 
 			const { data: isValid } = await supabase.rpc('verify_and_consume_code', {
@@ -26,23 +43,15 @@ export default function AccessCode() {
 			})
 
 			if (isValid) {
-			router.push({ 
-        pathname: `/(auth)${ROUTES.SIGNUP}`, 
-        params: { verified: 'true' } 
-    })
+				router.push({
+					pathname: `/(auth)${ROUTES.SIGNUP}`,
+					params: { verified: 'true' }
+				})
 			} else {
-				Alert.alert('ошибка', 'код недействителен', [
-					{
-						text: 'ОК',
-						onPress: () => {
-							setCode(['', '', '', ''])
-							setTimeout(() => inputs.current[0]?.focus(), 100)
-						}
-					}
-				])
+				showAlert('Ошибка', 'код недействителен')
 			}
 		} catch (e) {
-			Alert.alert('Ошибка', 'Что-то пошло не так')
+			showAlert('Ошибка', 'Что-то пошло не так')
 		} finally {
 			setLoading(false)
 		}
@@ -97,6 +106,15 @@ export default function AccessCode() {
 						textContentType='oneTimeCode'
 					/>
 				))}
+				<AppAlert
+					visible={alertVisible.visible}
+					title={alertVisible.title}
+					message='код недействителен'
+					onClose={() => setAlertVisible({ ...alertVisible, visible: false })}
+					onConfirm={() => {
+						setAlertVisible({ ...alertVisible, visible: false })
+					}}
+				/>
 			</View>
 		</AppScreenAuthLayout>
 	)
