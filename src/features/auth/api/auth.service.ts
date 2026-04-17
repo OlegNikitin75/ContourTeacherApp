@@ -50,5 +50,14 @@ export const authService = {
 
 		await supabase.auth.refreshSession()
 		return true
-	}
+	},
+	// Вход пользователя
+  async signIn(userEmail: string, userPassword: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: userEmail,
+			password: userPassword
+    });
+    if (error) throw error;
+    return data;
+  },
 }

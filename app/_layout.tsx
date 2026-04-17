@@ -10,6 +10,7 @@ import { Session } from '@supabase/supabase-js'
 import AnimatedSplashScreen from '../src/shared/components/AnimatedSplashScreen'
 import { supabase } from '../src/core/lib/supabase'
 import { ROUTES } from '@/core/lib/routes'
+import { AlertProvider } from '@/providers/AlertContext'
 
 SplashScreen.preventAutoHideAsync()
 const queryClient = new QueryClient()
@@ -107,11 +108,13 @@ export default function RootLayout() {
 		<GestureHandlerRootView className='flex-1'>
 			<SafeAreaProvider>
 				<QueryClientProvider client={queryClient}>
+					<AlertProvider>
 					<StatusBar style='dark' />
 					<Stack screenOptions={{ headerShown: false }}>
 						<Stack.Screen name='(auth)' />
 						<Stack.Screen name='(tabs)' />
 					</Stack>
+					</AlertProvider>
 				</QueryClientProvider>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>

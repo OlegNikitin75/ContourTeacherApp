@@ -1,8 +1,10 @@
 import { EyeHiddenIcon, EyeShownIcon } from '@/assets/icons/icons_svg_components'
 import { ROUTES } from '@/core/lib/routes'
 import { authService } from '@/features/auth/api/auth.service'
+import { useAlert } from '@/providers/AlertContext'
 import { AppInput } from '@/shared/components/AppInput'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
+import { translateError } from '@/shared/utils/errorMessages'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { View, Alert } from 'react-native'
@@ -15,6 +17,8 @@ export default function SignupScreen() {
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 	const [loading, setLoading] = useState(false)
 	const [errors, setErrors] = useState<{ [key: string]: string }>({})
+
+	const { showAlert } = useAlert()
 
 	const validate = () => {
 		const newErrors: { [key: string]: string } = {}
@@ -47,15 +51,18 @@ export default function SignupScreen() {
 			const data = await authService.signUp(email, password)
 
 			if (data?.session) {
-				router.replace(ROUTES.PROFILE_FILL) 
+				router.replace(ROUTES.PROFILE_FILL)
 			} else {
-				Alert.alert('Успех', 'Подтвердите почту для входа')
+				showAlert('Успех', 'Подтвердите почту для входа')
 			}
 		} catch (error: any) {
-			if (error.message?.includes('registered')) {
-				setErrors({ email: 'Этот email уже занят' })
+			const msg = error.message.toLowerCase()
+			const friendlyMessage = translateError(msg)
+
+			if (msg.includes('registered')) {
+				setErrors({ email: friendlyMessage })
 			} else {
-				Alert.alert('Ошибка', error.message)
+				showAlert('Ошибка', friendlyMessage)
 			}
 		} finally {
 			setLoading(false)

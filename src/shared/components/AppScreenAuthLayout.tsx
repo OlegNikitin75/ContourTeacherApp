@@ -10,12 +10,15 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 interface AppScreenAuthLayoutProps {
 	sourceImg?: ImageSourcePropType
+	width?: number | string
+	height?: number | string
+	className?: string
 	title: string
 	subtitle?: string
 	titleBtn: string
 	hrefBtn?: Href
 	actionBtn?: () => void
-	isLoading?: boolean;
+	isLoading?: boolean
 	bottomText?: string
 	bottomLinkText?: string
 	hrefLink?: Href
@@ -24,6 +27,9 @@ interface AppScreenAuthLayoutProps {
 
 export default function AppScreenAuthLayout({
 	sourceImg,
+	width,
+	height,
+	className,
 	title,
 	subtitle,
 	titleBtn,
@@ -44,7 +50,7 @@ export default function AppScreenAuthLayout({
 				<HeaderTitle firstItemTitle='контур' secondItemTitle='препод' />
 
 				{sourceImg ? (
-					<View className='flex-1 justify-center items-center w-full'>
+					<View className={`justify-center items-center ml-auto mr-auto ${className}`}>
 						<Image className='w-full h-full' source={sourceImg} resizeMode='contain' />
 					</View>
 				) : (
@@ -62,22 +68,18 @@ export default function AppScreenAuthLayout({
 					style={{ flex: 1 }}
 				>
 					<View
-						className={clsx('bg-app-white w-full px-4 pt-8 rounded-t-4xl flex-1')}
-						style={{ 
+						className='bg-app-white w-full px-4 pt-8 rounded-t-4xl flex-1'
+						style={{
 							paddingBottom: Math.max(insets.bottom, 42),
 							minHeight: '100%' // Важно для корректного фона
 						}}
 					>
-						<Text className='text-app-black text-h3 text-center mb-4'>
-							{title}
-						</Text>
-						
+						<Text className='text-app-black text-h3 text-center mb-4'>{title}</Text>
+
 						{subtitle && <Text className='text-app-gray text-t2 text-center mb-6'>{subtitle}</Text>}
 
 						{/* Поля ввода */}
-						<View className='mb-6'>
-							{children}
-						</View>
+						<View className='mb-6'>{children}</View>
 
 						{/* Кнопка регистрации/входа */}
 						<View className='mb-6'>

@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react'
-import { Alert, TextInput, View, Keyboard } from 'react-native'
+import { TextInput, View, Keyboard } from 'react-native'
 import { styled } from 'nativewind'
 import { useRouter } from 'expo-router'
 import { supabase } from '@/core/lib/supabase'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
 import { ROUTES } from '@/core/lib/routes'
 import AppAlert from '@/shared/components/AppAlert'
+import { useAlert } from '@/providers/AlertContext'
 const StyledInput = styled(TextInput)
 
 export default function AccessCode() {
@@ -13,19 +14,8 @@ export default function AccessCode() {
 	const inputs = useRef<TextInput[]>([])
 	const router = useRouter()
 	const [loading, setLoading] = useState(false)
-	const [alertVisible, setAlertVisible] = useState({
-		visible: false,
-		title: '',
-		message: ''
-	})
 
-	const showAlert = (title: string, message: string) => {
-		setAlertVisible({
-			visible: true,
-			title,
-			message
-		})
-	}
+	const { showAlert } = useAlert()
 
 	const verify = async (codeToVerify?: string) => {
 		const fullCode = codeToVerify || code.join('')
@@ -106,15 +96,6 @@ export default function AccessCode() {
 						textContentType='oneTimeCode'
 					/>
 				))}
-				<AppAlert
-					visible={alertVisible.visible}
-					title={alertVisible.title}
-					message='код недействителен'
-					onClose={() => setAlertVisible({ ...alertVisible, visible: false })}
-					onConfirm={() => {
-						setAlertVisible({ ...alertVisible, visible: false })
-					}}
-				/>
 			</View>
 		</AppScreenAuthLayout>
 	)
