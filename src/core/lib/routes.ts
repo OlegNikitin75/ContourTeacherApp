@@ -4,6 +4,7 @@ export const ROUTES = {
 	SIGNIN: '/signin',
 	SIGNUP: '/signup',
 	PROFILE_FILL:'/profile-fill',
+	INVITE:'/invite',
 	HOME: '/',
 	// Динамические пути
 	USER_DETAILS: (id: string | number) => `/user/${id}`

@@ -19,7 +19,7 @@ export const AppInput = ({ label, error, icon: Icon, onIconPress, ...props }: Ap
 
 			<View
 				className={`
-        bg-app-light-gray border rounded-lg px-5 py-2
+        bg-app-light-gray border-2 rounded-lg px-5 py-2
         flex-row items-center justify-between
         ${error ? 'border-app-error' : isFocused ? 'border-black' : 'border-transparent'}
     `}
@@ -28,7 +28,7 @@ export const AppInput = ({ label, error, icon: Icon, onIconPress, ...props }: Ap
 					{...props}
 					onFocus={() => setIsFocused(true)}
 					onBlur={() => setIsFocused(false)}
-					className='text-app-black text-base font-jetbrains-mono-medium flex-1'
+					className='text-app-black text-l1 flex-1'
 					placeholderTextColor={colors.appGray}
 					autoCapitalize='none'
 					autoCorrect={false}

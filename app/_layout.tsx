@@ -20,80 +20,63 @@ export default function RootLayout() {
 	const [isComplete, setIsComplete] = useState<boolean | null>(null)
 	const [initialized, setInitialized] = useState(false)
 	const [showContent, setShowContent] = useState(false)
+	const [isFetchingProfile, setIsFetchingProfile] = useState(true)
 
-	const segments = useSegments()
-	const router = useRouter()
+const [isFirstLoadDone, setIsFirstLoadDone] = useState(false)
 
 	const [fontsLoaded] = useFonts({
 		'JetBrainsMono-Regular': JetBrainsMono_400Regular,
 		'JetBrainsMono-Medium': JetBrainsMono_500Medium
 	})
 
-	// Функция обновления статуса профиля
 	const refreshProfileStatus = async (userId: string) => {
-		const { data } = await supabase.from('profiles').select('is_complete').eq('id', userId).single()
-		setIsComplete(data?.is_complete ?? false)
+		try {
+			const { data } = await supabase.from('profiles').select('is_complete').eq('id', userId).single()
+			setIsComplete(data?.is_complete ?? false)
+		} catch (e) {
+			setIsComplete(false)
+		} finally {
+			setIsFetchingProfile(false)
+			setIsFirstLoadDone(true) 
+		}
 	}
 
-	// 1. Инициализация и отслеживание Auth
 	useEffect(() => {
 		const prepare = async () => {
-			const {
-				data: { session }
-			} = await supabase.auth.getSession()
-			setSession(session)
-			if (session) {
-				await refreshProfileStatus(session.user.id)
+			try {
+				const { data: { session } } = await supabase.auth.getSession()
+				setSession(session)
+				if (session) {
+					await refreshProfileStatus(session.user.id)
+				} else {
+					setIsFetchingProfile(false)
+					setIsFirstLoadDone(true)
+				}
+			} catch (e) {
+				setIsFetchingProfile(false)
+			} finally {
+				setInitialized(true)
 			}
-			setInitialized(true)
 		}
 		prepare()
 
-		const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
+		const { data: authListener } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
 			setSession(currentSession)
 			if (currentSession) {
+				setIsFetchingProfile(true)
 				await refreshProfileStatus(currentSession.user.id)
 			} else {
-				setIsComplete(null) // Сбрасываем при выходе
+				setIsComplete(null)
+				setIsFetchingProfile(false)
 			}
 		})
-
 		return () => authListener.subscription.unsubscribe()
 	}, [])
 
-	// 2. Навигационная логика
-	useEffect(() => {
-		// Не делаем редирект, пока не прошли сплэш или не загрузили данные
-		if (!showContent || !initialized) return
+	// Ждем полной готовности данных
+const shouldShowSplash = !fontsLoaded || !initialized || !isFirstLoadDone || !showContent
 
-		const currentSegments = segments as string[]
-		const inAuthGroup = currentSegments.includes('(auth)')
-
-		if (!session) {
-			// Если нет сессии и мы не в auth-группе — на Intro
-			if (!inAuthGroup) {
-				router.replace(`/(auth)${ROUTES.INTRO}`)
-			}
-		} else {
-			// Если сессия есть, проверяем заполненность профиля
-			if (isComplete === false) {
-				const isOnFillingScreens = currentSegments.includes('profile-fill') || currentSegments.includes('access-code')
-
-				if (!isOnFillingScreens) {
-					router.replace(`/(auth)${ROUTES.PROFILE_FILL}`)
-				}
-			} else if (isComplete === true) {
-				// Если профиль готов, а мы всё еще в auth — уходим в табы
-				if (inAuthGroup) {
-					router.replace('/(tabs)')
-				}
-			}
-		}
-	}, [session, isComplete, showContent, initialized, segments])
-
-	if (!fontsLoaded || !initialized) return null
-
-	if (!showContent) {
+	if (shouldShowSplash) {
 		return (
 			<AnimatedSplashScreen
 				onFinish={() => {
@@ -105,18 +88,27 @@ export default function RootLayout() {
 	}
 
 	return (
-		<GestureHandlerRootView className='flex-1'>
+		<GestureHandlerRootView style={{ flex: 1 }}>
 			<SafeAreaProvider>
 				<QueryClientProvider client={queryClient}>
 					<AlertProvider>
-					<StatusBar style='dark' />
-					<Stack screenOptions={{ headerShown: false }}>
-						<Stack.Screen name='(auth)' />
-						<Stack.Screen name='(tabs)' />
-					</Stack>
+						<StatusBar style='dark' />
+						<Stack screenOptions={{ headerShown: false }}>
+							{/* 
+								КЛЮЧЕВОЕ ИЗМЕНЕНИЕ:
+								Рендерим ТОЛЬКО ту группу, которая нужна. 
+								Это исключает моргание, так как роутер физически не увидит "чужой" экран.
+							*/}
+							{!session || isComplete === false ? (
+								<Stack.Screen name="(auth)" options={{ animation: 'none' }} />
+							) : (
+								<Stack.Screen name="(tabs)" options={{ animation: 'none' }} />
+							)}
+						</Stack>
 					</AlertProvider>
 				</QueryClientProvider>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>
 	)
 }
+

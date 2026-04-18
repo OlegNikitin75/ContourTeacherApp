@@ -5,7 +5,7 @@ import { Dropdown } from 'react-native-element-dropdown'
 
 interface AppDropdownProps {
 	label?: string
-	 data: { label: string; value: string }[] 
+	data: { label: string; value: string }[]
 	value: string | null
 	placeholder?: string
 	error?: string
@@ -67,13 +67,28 @@ const styles = StyleSheet.create({
 	dropdown: {
 		height: 56,
 		borderColor: colors.appLightGray,
-		borderWidth: 1,
+		borderWidth: 2,
 		borderRadius: 8,
-		paddingHorizontal: 12,
+		paddingHorizontal: 24,
 		backgroundColor: colors.appLightGray
 	},
-	placeholderStyle: { fontSize: 16, color: colors.appGray },
-	selectedTextStyle: { fontSize: 16, color: colors.appBlack },
-	itemTextStyle: { fontSize: 16, color: colors.appBlack },
+	placeholderStyle: {
+		fontSize: 16,
+		color: colors.appGray,
+		textTransform: 'lowercase',
+		fontFamily: 'JetBrainsMono-Medium'
+	},
+	selectedTextStyle: {
+		fontSize: 16,
+		color: colors.appBlack,
+		textTransform: 'lowercase',
+		fontFamily: 'JetBrainsMono-Medium'
+	},
+	itemTextStyle: {
+		fontSize: 16,
+		color: colors.appBlack,
+		textTransform: 'lowercase',
+		fontFamily: 'JetBrainsMono-Medium'
+	},
 	errorText: { color: colors.appError, fontSize: 12, marginTop: 4, marginLeft: 4 }
 })

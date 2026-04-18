@@ -1,26 +1,27 @@
 import { IMAGES } from '@/assets'
 import { EyeHiddenIcon, EyeShownIcon } from '@/assets/icons/icons_svg_components'
+import { useForm } from '@/core/hooks/useForm'
 import { ROUTES } from '@/core/lib/routes'
 import { authService } from '@/features/auth/api/auth.service'
-import { useAlert } from '@/providers/AlertContext'
 import { AppInput } from '@/shared/components/AppInput'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
 import { translateError } from '@/shared/utils/errorMessages'
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { View, Keyboard } from 'react-native'
+import { View, Keyboard, Text } from 'react-native'
 
 export default function SigninScreen() {
-	const [email, setEmail] = useState('')
-	const [password, setPassword] = useState('')
+	const { values, errors, setErrors, handleChange } = useForm({
+		email: '',
+		password: ''
+	})
+
 	const [showPassword, setShowPassword] = useState(false)
-
 	const [loading, setLoading] = useState(false)
-	const [errors, setErrors] = useState<{ [key: string]: string }>({})
+	// Новое состояние для общей ошибки сервера
+	const [formError, setFormError] = useState<string | null>(null)
 
-	const { showAlert } = useAlert()
-
-	const validate = () => {
+	const validate = (email: string, pass: string) => {
 		const newErrors: { [key: string]: string } = {}
 
 		if (!email) {
@@ -29,41 +30,47 @@ export default function SigninScreen() {
 			newErrors.email = 'Некорректный формат емейл'
 		}
 
-		if (!password) {
+		if (!pass) {
 			newErrors.password = 'Введите пароль'
-		} else if (password.length < 6) {
+		} else if (pass.length < 6) {
 			newErrors.password = 'Минимум 6 символов'
 		}
+
 		setErrors(newErrors)
 		return Object.keys(newErrors).length === 0
 	}
 
+	const handleInputChange = (field: 'email' | 'password', text: string) => {
+		handleChange(field, text)
+		if (formError) setFormError(null) // Убираем общую ошибку, если юзер начал что-то менять
+	}
+
 	const handleSignin = async () => {
-		if (!validate()) return
+		setFormError(null)
+		const cleanEmail = values.email.trim().toLowerCase()
+		const cleanPassword = values.password.trim()
+
+		if (!validate(cleanEmail, cleanPassword)) return
 
 		try {
 			setLoading(true)
-
 			Keyboard.dismiss()
 
-			const data = await authService.signIn(email, password)
+			const data = await authService.signIn(cleanEmail, cleanPassword)
 
-			if (data?.session) router.replace(ROUTES.HOME)
+			if (data?.session) {
+				router.replace('/(tabs)/') 
+			}
 		} catch (error: any) {
 			const message = error.message.toLowerCase()
 
-			// 1. Ошибка учетных данных (самая частая)
+			// Вместо showAlert устанавливаем текст в formError
 			if (message.includes('invalid login credentials')) {
-				showAlert('Ошибка', 'Неверный email или пароль')
-			}
-			// 3. Слишком много попыток (защита от брутфорса)
-			else if (message.includes('rate limit')) {
-				showAlert('Ой!', 'Слишком много попыток. Попробуйте чуть позже')
-			}
-			// 4. Остальные ошибки
-			else {
-				const friendlyMessage = translateError(error.message)
-				showAlert('Ошибка', friendlyMessage)
+				setFormError('Неверный емейл или пароль')
+			} else if (message.includes('rate limit')) {
+				setFormError('Слишком много попыток. Попробуйте позже')
+			} else {
+				setFormError(translateError(error.message))
 			}
 		} finally {
 			setLoading(false)
@@ -73,8 +80,7 @@ export default function SigninScreen() {
 	return (
 		<AppScreenAuthLayout
 			sourceImg={IMAGES.SigninBG}
-			className='w-45 h-45'
-			title='рады видеть вас снова в контуре'
+			title={`рады видеть вас\nв контуре`}
 			titleBtn='войти'
 			actionBtn={handleSignin}
 			isLoading={loading}
@@ -86,20 +92,32 @@ export default function SigninScreen() {
 				<AppInput
 					label='ваш емейл'
 					placeholder='hello@contour.com'
-					value={email}
-					onChangeText={setEmail}
+					value={values.email}
+					onChangeText={(text) => handleInputChange('email', text)}
 					error={errors.email}
+					autoCapitalize='none'
+					keyboardType='email-address'
 				/>
 				<AppInput
 					label='ваш пароль'
 					placeholder='******'
-					value={password}
-					onChangeText={setPassword}
+					value={values.password}
+					onChangeText={(text) => handleInputChange('password', text)}
 					icon={showPassword ? EyeShownIcon : EyeHiddenIcon}
 					onIconPress={() => setShowPassword(!showPassword)}
 					secureTextEntry={!showPassword}
 					error={errors.password}
+					autoCapitalize='none'
 				/>
+
+				{/* Контейнер для отображения серверной ошибки */}
+				<View className="h-5 justify-center items-center">
+					{formError && (
+						<Text className="text-app-error text-xs font-jetbrains-medium">
+							{formError}
+						</Text>
+					)}
+				</View>
 			</View>
 		</AppScreenAuthLayout>
 	)
