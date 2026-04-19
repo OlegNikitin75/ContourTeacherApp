@@ -9,6 +9,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 interface AppScreenAuthLayoutProps {
 	sourceImg?: ImageSourcePropType
+	imageHeight?: number
 	title: string
 	subtitle?: string
 	titleBtn: string
@@ -24,6 +25,7 @@ interface AppScreenAuthLayoutProps {
 
 export default function AppScreenAuthLayout({
 	sourceImg,
+	imageHeight,
 	title,
 	subtitle,
 	titleBtn,
@@ -44,23 +46,20 @@ export default function AppScreenAuthLayout({
 			<SafeAreaView style={{ flex: 1 }} edges={['top']}>
 				<HeaderTitle firstItemTitle='контур' secondItemTitle='препод' />
 
-				{/* Главный контейнер, который распределяет место */}
 				<View className='flex-1'>
-					
-					{/* 1. Блок с картинкой: flex-1 заставляет его занять всё свободное место сверху */}
 					{sourceImg ? (
-						<View className='flex-1 justify-center items-center'>
-							<Image 
-								source={sourceImg} 
-								style={{ width: '100%', height: '100%' }}
-								resizeMode='contain' 
-							/>
+						<View
+							style={{
+								height: imageHeight || 'auto',
+								flex: imageHeight ? 0 : 1
+							}}
+							className='flex-1 justify-center items-center'
+						>
+							<Image source={sourceImg} style={{ width: '100%', height: '100%' }} resizeMode='contain' />
 						</View>
 					) : (
-						<View className='flex-1' /> 
+						<View className='flex-1' />
 					)}
-
-					{/* 2. Контейнер для скролла: flex-none заставляет его брать ровно столько, сколько нужно контенту */}
 					<View className='flex-none'>
 						<KeyboardAwareScrollView
 							contentContainerStyle={{ flexGrow: 0 }}
@@ -73,16 +72,12 @@ export default function AppScreenAuthLayout({
 								className='bg-app-white w-full px-4 pt-8 rounded-t-4xl'
 								style={{
 									// paddingBottom должен учитывать нижнюю безопасную зону
-									paddingBottom: Math.max(insets.bottom, 24),
+									paddingBottom: Math.max(insets.bottom, 24)
 								}}
 							>
 								<Text className='text-app-black text-h3 text-center mb-2'>{title}</Text>
 
-								{subtitle && (
-									<Text className='text-app-gray text-t2 text-center mb-4'>
-										{subtitle}
-									</Text>
-								)}
+								{subtitle && <Text className='text-app-gray text-t2 text-center mb-4'>{subtitle}</Text>}
 
 								<View className='mb-4'>{children}</View>
 
@@ -92,12 +87,7 @@ export default function AppScreenAuthLayout({
 											<AppButton title={titleBtn} isLoading={isLoading} isDisabled={disabled} />
 										</Link>
 									) : (
-										<AppButton 
-											title={titleBtn} 
-											onPress={actionBtn} 
-											isLoading={isLoading} 
-											isDisabled={disabled} 
-										/>
+										<AppButton title={titleBtn} onPress={actionBtn} isLoading={isLoading} isDisabled={disabled} />
 									)}
 								</View>
 
@@ -107,9 +97,7 @@ export default function AppScreenAuthLayout({
 										{hrefLink && bottomLinkText && (
 											<Link href={hrefLink} asChild>
 												<TouchableOpacity>
-													<Text className='text-app-black text-l2 underline'>
-														{bottomLinkText}
-													</Text>
+													<Text className='text-app-black text-l2 underline'>{bottomLinkText}</Text>
 												</TouchableOpacity>
 											</Link>
 										)}
@@ -123,4 +111,3 @@ export default function AppScreenAuthLayout({
 		</View>
 	)
 }
-

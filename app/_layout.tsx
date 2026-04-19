@@ -22,7 +22,7 @@ export default function RootLayout() {
 	const [showContent, setShowContent] = useState(false)
 	const [isFetchingProfile, setIsFetchingProfile] = useState(true)
 
-const [isFirstLoadDone, setIsFirstLoadDone] = useState(false)
+	const [isFirstLoadDone, setIsFirstLoadDone] = useState(false)
 
 	const [fontsLoaded] = useFonts({
 		'JetBrainsMono-Regular': JetBrainsMono_400Regular,
@@ -37,14 +37,20 @@ const [isFirstLoadDone, setIsFirstLoadDone] = useState(false)
 			setIsComplete(false)
 		} finally {
 			setIsFetchingProfile(false)
-			setIsFirstLoadDone(true) 
+			setIsFirstLoadDone(true)
 		}
 	}
+
+	// useEffect(() => {
+	// 	supabase.auth.signOut()
+	// }, [])
 
 	useEffect(() => {
 		const prepare = async () => {
 			try {
-				const { data: { session } } = await supabase.auth.getSession()
+				const {
+					data: { session }
+				} = await supabase.auth.getSession()
 				setSession(session)
 				if (session) {
 					await refreshProfileStatus(session.user.id)
@@ -74,7 +80,7 @@ const [isFirstLoadDone, setIsFirstLoadDone] = useState(false)
 	}, [])
 
 	// Ждем полной готовности данных
-const shouldShowSplash = !fontsLoaded || !initialized || !isFirstLoadDone || !showContent
+	const shouldShowSplash = !fontsLoaded || !initialized || !isFirstLoadDone || !showContent
 
 	if (shouldShowSplash) {
 		return (
@@ -100,9 +106,9 @@ const shouldShowSplash = !fontsLoaded || !initialized || !isFirstLoadDone || !sh
 								Это исключает моргание, так как роутер физически не увидит "чужой" экран.
 							*/}
 							{!session || isComplete === false ? (
-								<Stack.Screen name="(auth)" options={{ animation: 'none' }} />
+								<Stack.Screen name='(auth)' options={{ animation: 'none' }} />
 							) : (
-								<Stack.Screen name="(tabs)" options={{ animation: 'none' }} />
+								<Stack.Screen name='(tabs)' options={{ animation: 'none' }} />
 							)}
 						</Stack>
 					</AlertProvider>
@@ -111,4 +117,3 @@ const shouldShowSplash = !fontsLoaded || !initialized || !isFirstLoadDone || !sh
 		</GestureHandlerRootView>
 	)
 }
-

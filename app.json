@@ -2,7 +2,8 @@
 	"expo": {
 		"name": "контур|препод",
 		"slug": "ContourTeacherApp",
-		 "scheme": "contour-app", 
+		"scheme": "contour-app",
+		"orientation": "portrait",
 		"icon": "./src/assets/images/icon.png",
 		"ios": {
 			"icon": {
