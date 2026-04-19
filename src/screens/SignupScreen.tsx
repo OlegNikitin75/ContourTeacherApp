@@ -7,7 +7,7 @@ import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
 import { translateError } from '@/shared/utils/errorMessages'
 import { router, useFocusEffect } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { View, BackHandler, Text } from 'react-native'
+import { BackHandler, Text, View } from 'react-native'
 
 export default function SignupScreen() {
 	const { values, errors, setErrors, handleChange } = useForm({
@@ -19,7 +19,6 @@ export default function SignupScreen() {
 	const [showPassword, setShowPassword] = useState(false)
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 	const [loading, setLoading] = useState(false)
-	// Состояние для общей ошибки (серверной) или сообщения об успехе
 	const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(null)
 
 	useFocusEffect(
@@ -58,25 +57,28 @@ export default function SignupScreen() {
 		if (statusMessage) setStatusMessage(null)
 	}
 
-	const handleSignup = async () => {
+		const handleSignup = async () => {
 		const trimmedEmail = values.email.trim().toLowerCase()
 		const trimmedPassword = values.password.trim()
 
 		if (!validate(trimmedEmail, trimmedPassword, values.confirmPassword.trim())) return
 
 		try {
-			setLoading(true)
-			setStatusMessage(null)
+        setLoading(true)
+        setStatusMessage(null)
 
-			const data = await authService.signUp(trimmedEmail, trimmedPassword)
+        const data = await authService.signUp(trimmedEmail, trimmedPassword)
 
-			// Теперь data.session будет существовать СРАЗУ
-			if (data?.session) {
-				// RootLayout сам увидит сессию и перекинет на PROFILE_FILL,
-				// но для скорости можно сделать это явно:
-				router.replace(`/(auth)${ROUTES.INVITE}`)
-			}
+        if (data) {
+            setLoading(false) 
+            setStatusMessage({ text: 'Регистрация прошла успешно!', type: 'success' })
+            
+            setTimeout(() => {
+                router.replace(`/(auth)${ROUTES.PROFILE_FILL}`)
+            }, 2000) 
+        }
 		} catch (error: any) {
+			setLoading(false)
 			const msg = error.message.toLowerCase()
 			const friendlyMessage = translateError(msg)
 
@@ -85,8 +87,6 @@ export default function SignupScreen() {
 			} else {
 				setStatusMessage({ text: friendlyMessage, type: 'error' })
 			}
-		} finally {
-			setLoading(false)
 		}
 	}
 
@@ -110,6 +110,7 @@ export default function SignupScreen() {
 					error={errors.email}
 					autoCapitalize='none'
 					keyboardType='email-address'
+					editable={!loading && statusMessage?.type !== 'success'}
 				/>
 				<AppInput
 					label='ваш пароль'
@@ -121,6 +122,7 @@ export default function SignupScreen() {
 					secureTextEntry={!showPassword}
 					error={errors.password}
 					autoCapitalize='none'
+					editable={!loading && statusMessage?.type !== 'success'}
 				/>
 				<AppInput
 					label='повторите ваш пароль'
@@ -132,14 +134,14 @@ export default function SignupScreen() {
 					secureTextEntry={!showConfirmPassword}
 					error={errors.confirmPassword}
 					autoCapitalize='none'
+					editable={!loading && statusMessage?.type !== 'success'}
 				/>
 
-				{/* Блок для системных сообщений */}
 				<View className='min-h-7.5 px-4 justify-center items-center'>
 					{statusMessage && (
 						<Text
 							className={`${
-								statusMessage.type === 'success' ? 'text-l3 text-app-success' : 'text-l3 not-only:text-app-error'
+								statusMessage.type === 'success' ? 'text-app-success' : 'text-app-error'
 							} text-l3 text-center`}
 						>
 							{statusMessage.text}

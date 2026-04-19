@@ -1,12 +1,11 @@
-import { useState, useRef } from 'react'
-import { TextInput, View, Keyboard, Text } from 'react-native'
-import { styled } from 'nativewind'
-import { useRouter } from 'expo-router'
+import { ROUTES } from '@/core/lib/routes'
 import { supabase } from '@/core/lib/supabase'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
-import { ROUTES } from '@/core/lib/routes'
-import { useAlert } from '@/providers/AlertContext'
-
+import { useRouter } from 'expo-router'
+import { styled } from 'nativewind'
+import { ComponentProps, useRef, useState } from 'react'
+import { Keyboard, Text, TextInput, View } from 'react-native'
+type KeyPressEvent = ComponentProps<typeof TextInput>['onKeyPress']
 const StyledInput = styled(TextInput)
 
 export default function AccessCodeScreen() {
@@ -15,57 +14,77 @@ export default function AccessCodeScreen() {
 	const router = useRouter()
 	const [loading, setLoading] = useState(false)
 	const [status, setStatus] = useState<'default' | 'success' | 'error'>('default')
+	const [message, setMessage] = useState('')
 
-	const { showAlert } = useAlert()
 	const isSuccess = status === 'success'
 
 	const verify = async (codeToVerify?: string) => {
 		const fullCode = codeToVerify || code.join('')
+		
 		if (fullCode.length < 4 || loading || isSuccess) return
 
 		try {
 			setLoading(true)
-			const { data: isValid } = await supabase.rpc('verify_and_consume_code', { input_code: fullCode })
+			setMessage('')
+			
+			const { data: isValid, error } = await supabase.rpc('verify_and_consume_code', { 
+				input_code: fullCode 
+			})
+
+			if (error) throw error
 
 			if (isValid) {
 				setStatus('success')
+				setMessage('Доступ разрешен')
 				Keyboard.dismiss()
+				
 				setTimeout(() => {
-					router.replace({ pathname: `/(auth)${ROUTES.SIGNUP}`, params: { verified: 'true' } })
-				}, 1500)
+					router.replace({ 
+						pathname: `/(auth)${ROUTES.SIGNUP}`, 
+						params: { verified: 'true' } 
+					})
+				}, 1000)
 			} else {
 				setStatus('error')
+				setMessage('Неверный код доступа')
 				setCode(['', '', '', ''])
 				inputs.current[0]?.focus()
 			}
 		} catch (e) {
 			setStatus('error')
-			showAlert('Ошибка сети', 'Не удалось связаться с сервером')
+			setMessage('Ошибка сети или сервера')
 		} finally {
 			setLoading(false)
 		}
 	}
 
 	const handleChange = (text: string, index: number) => {
-		const char = text.slice(-1)
+		// Оставляем только цифры
+		const char = text.replace(/[^0-9]/g, '').slice(-1)
 		const newCode = [...code]
 		newCode[index] = char
 		setCode(newCode)
 
-		if (status === 'error') setStatus('default')
+		if (status !== 'default') {
+			setStatus('default')
+			setMessage('')
+		}
 
 		if (char && index < 3) {
 			inputs.current[index + 1]?.focus()
 		}
 
-		if (newCode.join('').length === 4) verify(newCode.join(''))
-	}
-
-	const handleKeyPress = (e: any, index: number) => {
-		if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
-			inputs.current[index - 1]?.focus()
+		if (newCode.join('').length === 4) {
+			verify(newCode.join(''))
 		}
 	}
+
+
+const handleKeyPress = (e: Parameters<NonNullable<KeyPressEvent>>[0], index: number) => {
+    if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
+        inputs.current[index - 1]?.focus()
+    }
+}
 
 	return (
 		<AppScreenAuthLayout
@@ -73,13 +92,13 @@ export default function AccessCodeScreen() {
 			subtitle='Админ кафедры выдал вам уникальный код для доступа'
 			titleBtn='проверить код'
 			actionBtn={() => verify()}
-			isLoading={loading || isSuccess} 
-			sourceImg={0}
+			isLoading={loading || isSuccess}
+			disabled={loading || isSuccess}
 		>
 			<View className='flex-col items-center gap-4 mb-6'>
 				<View
 					className='flex-row justify-center items-center gap-3'
-					pointerEvents={loading || isSuccess ? 'none' : 'auto'} // Глобальная блокировка кликов
+					pointerEvents={loading || isSuccess ? 'none' : 'auto'}
 				>
 					{code.map((digit, index) => (
 						<StyledInput
@@ -91,7 +110,7 @@ export default function AccessCodeScreen() {
 								status === 'success'
 									? 'border-app-success'
 									: status === 'error'
-										? 'border-app-error '
+										? 'border-app-error'
 										: 'border-transparent bg-app-light-gray focus:border-app-gray'
 							}`}
 							maxLength={1}
@@ -100,16 +119,20 @@ export default function AccessCodeScreen() {
 							onChangeText={text => handleChange(text, index)}
 							onKeyPress={e => handleKeyPress(e, index)}
 							editable={!loading && !isSuccess}
+							contextMenuHidden 
 						/>
 					))}
 				</View>
 
-				<View className='h-6'>
-					{status === 'success' && (
-						<Text className='text-app-success text-l3 '>Доступ разрешен</Text>
-					)}
-					{status === 'error' && (
-						<Text className='text-app-error text-l3 '>Неверный код доступа</Text>
+				<View className='h-6 justify-center items-center'>
+					{message !== '' && (
+						<Text 
+							className={`text-l3 text-center ${
+								status === 'success' ? 'text-app-success' : 'text-app-error'
+							}`}
+						>
+							{message}
+						</Text>
 					)}
 				</View>
 			</View>

@@ -18,7 +18,6 @@ export default function SigninScreen() {
 
 	const [showPassword, setShowPassword] = useState(false)
 	const [loading, setLoading] = useState(false)
-	// Новое состояние для общей ошибки сервера
 	const [formError, setFormError] = useState<string | null>(null)
 
 	const validate = (email: string, pass: string) => {
@@ -42,7 +41,7 @@ export default function SigninScreen() {
 
 	const handleInputChange = (field: 'email' | 'password', text: string) => {
 		handleChange(field, text)
-		if (formError) setFormError(null) // Убираем общую ошибку, если юзер начал что-то менять
+		if (formError) setFormError(null) 
 	}
 
 	const handleSignin = async () => {
@@ -59,7 +58,7 @@ export default function SigninScreen() {
 			const data = await authService.signIn(cleanEmail, cleanPassword)
 
 			if (data?.session) {
-				router.replace('/(tabs)/') 
+				router.replace(`/(tabs)${ROUTES.HOME}`)
 			}
 		} catch (error: any) {
 			const message = error.message.toLowerCase()
