@@ -12,6 +12,7 @@ interface AppDropdownProps {
 	onChange: (value: string) => void
 	onBlur?: () => void
 	onFocus?: () => void
+	disabled?: boolean // 1. Добавляем в интерфейс
 }
 
 export default function AppDropdown({
@@ -22,19 +23,21 @@ export default function AppDropdown({
 	error,
 	onChange,
 	onBlur,
-	onFocus
+	onFocus,
+	disabled 
 }: AppDropdownProps) {
 	const [isFocus, setIsFocus] = useState(false)
 
 	return (
-		<View className='w-full mb-4'>
+		<View className='w-full mb-4' style={disabled && { opacity: 0.6 }}> 
 			{label && <Text className='text-h4 text-app-black mb-3'>{label}</Text>}
 			<Dropdown
 				style={[
 					styles.dropdown,
 					isFocus && { borderColor: colors.appBlack },
-					error && { borderColor: colors.appError }
+					error && { borderColor: colors.appError },
 				]}
+				disable={disabled} 
 				placeholderStyle={styles.placeholderStyle}
 				selectedTextStyle={styles.selectedTextStyle}
 				itemTextStyle={styles.itemTextStyle}
@@ -44,6 +47,7 @@ export default function AppDropdown({
 				placeholder={!isFocus ? placeholder || 'Выберите...' : '...'}
 				value={value}
 				onFocus={() => {
+					if (disabled) return
 					setIsFocus(true)
 					if (onFocus) onFocus()
 				}}
@@ -61,6 +65,7 @@ export default function AppDropdown({
 		</View>
 	)
 }
+
 
 const styles = StyleSheet.create({
 	label: { fontSize: 14, marginBottom: 8, color: '#333', fontWeight: '500' },

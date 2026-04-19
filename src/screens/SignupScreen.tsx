@@ -4,10 +4,11 @@ import { ROUTES } from '@/core/lib/routes'
 import { authService } from '@/features/auth/api/auth.service'
 import { AppInput } from '@/shared/components/AppInput'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
+import { AppStatusMessage } from '@/shared/components/AppStatusMessage' // Импортируем компонент
 import { translateError } from '@/shared/utils/errorMessages'
 import { router, useFocusEffect } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { BackHandler, Text, View } from 'react-native'
+import { BackHandler, View } from 'react-native'
 
 export default function SignupScreen() {
 	const { values, errors, setErrors, handleChange } = useForm({
@@ -57,26 +58,26 @@ export default function SignupScreen() {
 		if (statusMessage) setStatusMessage(null)
 	}
 
-		const handleSignup = async () => {
+	const handleSignup = async () => {
 		const trimmedEmail = values.email.trim().toLowerCase()
 		const trimmedPassword = values.password.trim()
 
 		if (!validate(trimmedEmail, trimmedPassword, values.confirmPassword.trim())) return
 
 		try {
-        setLoading(true)
-        setStatusMessage(null)
+			setLoading(true)
+			setStatusMessage(null)
 
-        const data = await authService.signUp(trimmedEmail, trimmedPassword)
+			const data = await authService.signUp(trimmedEmail, trimmedPassword)
 
-        if (data) {
-            setLoading(false) 
-            setStatusMessage({ text: 'Регистрация прошла успешно!', type: 'success' })
-            
-            setTimeout(() => {
-                router.replace(`/(auth)${ROUTES.PROFILE_FILL}`)
-            }, 2000) 
-        }
+			if (data) {
+				setLoading(false) 
+				setStatusMessage({ text: 'Регистрация прошла успешно!', type: 'success' })
+				
+				setTimeout(() => {
+					router.replace(`/(auth)${ROUTES.PROFILE_FILL}`)
+				}, 2000) 
+			}
 		} catch (error: any) {
 			setLoading(false)
 			const msg = error.message.toLowerCase()
@@ -137,17 +138,10 @@ export default function SignupScreen() {
 					editable={!loading && statusMessage?.type !== 'success'}
 				/>
 
-				<View className='min-h-7.5 px-4 justify-center items-center'>
-					{statusMessage && (
-						<Text
-							className={`${
-								statusMessage.type === 'success' ? 'text-app-success' : 'text-app-error'
-							} text-l3 text-center`}
-						>
-							{statusMessage.text}
-						</Text>
-					)}
-				</View>
+				<AppStatusMessage 
+					message={statusMessage?.text} 
+					type={statusMessage?.type} 
+				/>
 			</View>
 		</AppScreenAuthLayout>
 	)

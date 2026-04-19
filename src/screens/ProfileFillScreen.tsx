@@ -1,12 +1,12 @@
-import { ROUTES } from '@/core/lib/routes'
+import { departments, positions } from '@/core/constants/data'
 import { authService } from '@/features/auth/api/auth.service'
+import AppDropdown from '@/shared/components/AppDropdown'
 import { AppInput } from '@/shared/components/AppInput'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
+import { AppStatusMessage } from '@/shared/components/AppStatusMessage' // Импортируем
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { View, Text } from 'react-native'
-import { departments, positions } from '@/core/constants/data'
-import AppDropdown from '@/shared/components/AppDropdown'
+import { View } from 'react-native'
 
 export default function ProfileFillScreen() {
 	const [firstName, setFirstName] = useState('')
@@ -14,15 +14,16 @@ export default function ProfileFillScreen() {
 	const [lastName, setLastName] = useState('')
 	const [position, setPosition] = useState<string | null>(null)
 	const [department, setDepartment] = useState<string | null>(null)
-	
+
 	const [loading, setLoading] = useState(false)
 	const [errors, setErrors] = useState<{ [key: string]: string }>({})
-	const [formError, setFormError] = useState<string | null>(null)
+	const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(null)
 
-	// Очистка ошибок при взаимодействии
+	const isSuccess = statusMessage?.type === 'success'
+
 	const handleFieldChange = (field: string, setter: (v: any) => void, value: any) => {
 		setter(value)
-		if (formError) setFormError(null)
+		if (statusMessage) setStatusMessage(null)
 		if (errors[field]) {
 			setErrors(prev => {
 				const newErrs = { ...prev }
@@ -55,25 +56,32 @@ export default function ProfileFillScreen() {
 		return Object.keys(newErrors).length === 0
 	}
 
-	const handleSignup = async () => {
-		setFormError(null)
+	const handleCompleteProfile = async () => {
 		if (!validate()) return
 
 		try {
 			setLoading(true)
+			setStatusMessage(null)
+
 			await authService.completeProfile(
-				firstName.trim(), 
-				lastName.trim(), 
-				middleName.trim(), 
-				position!, 
+				firstName.trim(),
+				lastName.trim(),
+				middleName.trim(),
+				position!,
 				department!
 			)
-			// RootLayout увидит обновление is_complete через refreshSession в сервисе
-			router.replace(`/(tabs)/`)
-		} catch (error: any) {
-			setFormError(error.message || 'Не удалось сохранить профиль')
-		} finally {
+
 			setLoading(false)
+			setStatusMessage({ text: 'профиль успешно заполнен!', type: 'success' })
+
+			// Задержка работает, так как RootLayout теперь стабилен
+			setTimeout(() => {
+				router.replace('/(tabs)')
+			}, 2000)
+
+		} catch (error: any) {
+			setLoading(false)
+			setStatusMessage({ text: error.message || 'не удалось сохранить профиль', type: 'error' })
 		}
 	}
 
@@ -81,10 +89,9 @@ export default function ProfileFillScreen() {
 		<AppScreenAuthLayout
 			title='расскажите немного о себе'
 			titleBtn='завершить'
-			actionBtn={handleSignup}
+			actionBtn={handleCompleteProfile}
 			isLoading={loading}
-			// Блокируем кнопку, если уже идет загрузка
-			disabled={loading}
+			disabled={loading || isSuccess}
 		>
 			<View className='gap-y-4'>
 				<AppInput
@@ -93,6 +100,7 @@ export default function ProfileFillScreen() {
 					value={lastName}
 					onChangeText={(v) => handleFieldChange('lastName', setLastName, v)}
 					error={errors.lastName}
+					editable={!loading && !isSuccess}
 				/>
 				<AppInput
 					label='ваше имя'
@@ -100,6 +108,7 @@ export default function ProfileFillScreen() {
 					value={firstName}
 					onChangeText={(v) => handleFieldChange('firstName', setFirstName, v)}
 					error={errors.firstName}
+					editable={!loading && !isSuccess}
 				/>
 				<AppInput
 					label='ваше отчество'
@@ -107,8 +116,9 @@ export default function ProfileFillScreen() {
 					value={middleName}
 					onChangeText={(v) => handleFieldChange('middleName', setMiddleName, v)}
 					error={errors.middleName}
+					editable={!loading && !isSuccess}
 				/>
-				
+
 				<AppDropdown
 					label='Ваша должность'
 					placeholder='Выберите из списка'
@@ -116,6 +126,7 @@ export default function ProfileFillScreen() {
 					value={position}
 					onChange={(v) => handleFieldChange('position', setPosition, v)}
 					error={errors.position}
+					disabled={loading || isSuccess}
 				/>
 
 				<AppDropdown
@@ -125,16 +136,13 @@ export default function ProfileFillScreen() {
 					value={department}
 					onChange={(v) => handleFieldChange('department', setDepartment, v)}
 					error={errors.department}
+					disabled={loading || isSuccess}
 				/>
 
-				{/* Блок для системной ошибки над кнопкой */}
-				<View className="h-5 justify-center items-center">
-					{formError && (
-						<Text className="text-app-error text-l3">
-							{formError}
-						</Text>
-					)}
-				</View>
+				<AppStatusMessage
+					message={statusMessage?.text}
+					type={statusMessage?.type}
+				/>
 			</View>
 		</AppScreenAuthLayout>
 	)

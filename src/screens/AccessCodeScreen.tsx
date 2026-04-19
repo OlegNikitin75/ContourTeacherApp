@@ -1,10 +1,12 @@
 import { ROUTES } from '@/core/lib/routes'
 import { supabase } from '@/core/lib/supabase'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
+import { AppStatusMessage } from '@/shared/components/AppStatusMessage' // Импортируем
 import { useRouter } from 'expo-router'
 import { styled } from 'nativewind'
 import { ComponentProps, useRef, useState } from 'react'
-import { Keyboard, Text, TextInput, View } from 'react-native'
+import { Keyboard, TextInput, View } from 'react-native'
+
 type KeyPressEvent = ComponentProps<typeof TextInput>['onKeyPress']
 const StyledInput = styled(TextInput)
 
@@ -13,10 +15,11 @@ export default function AccessCodeScreen() {
 	const inputs = useRef<TextInput[]>([])
 	const router = useRouter()
 	const [loading, setLoading] = useState(false)
-	const [status, setStatus] = useState<'default' | 'success' | 'error'>('default')
-	const [message, setMessage] = useState('')
+	
+	// Приводим стейт сообщения к единому стандарту объекта
+	const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(null)
 
-	const isSuccess = status === 'success'
+	const isSuccess = statusMessage?.type === 'success'
 
 	const verify = async (codeToVerify?: string) => {
 		const fullCode = codeToVerify || code.join('')
@@ -25,7 +28,7 @@ export default function AccessCodeScreen() {
 
 		try {
 			setLoading(true)
-			setMessage('')
+			setStatusMessage(null)
 			
 			const { data: isValid, error } = await supabase.rpc('verify_and_consume_code', { 
 				input_code: fullCode 
@@ -34,8 +37,7 @@ export default function AccessCodeScreen() {
 			if (error) throw error
 
 			if (isValid) {
-				setStatus('success')
-				setMessage('Доступ разрешен')
+				setStatusMessage({ text: 'Доступ разрешен', type: 'success' })
 				Keyboard.dismiss()
 				
 				setTimeout(() => {
@@ -45,30 +47,24 @@ export default function AccessCodeScreen() {
 					})
 				}, 1000)
 			} else {
-				setStatus('error')
-				setMessage('Неверный код доступа')
+				setStatusMessage({ text: 'Неверный код доступа', type: 'error' })
 				setCode(['', '', '', ''])
 				inputs.current[0]?.focus()
 			}
 		} catch (e) {
-			setStatus('error')
-			setMessage('Ошибка сети или сервера')
+			setStatusMessage({ text: 'Ошибка сети или сервера', type: 'error' })
 		} finally {
 			setLoading(false)
 		}
 	}
 
 	const handleChange = (text: string, index: number) => {
-		// Оставляем только цифры
 		const char = text.replace(/[^0-9]/g, '').slice(-1)
 		const newCode = [...code]
 		newCode[index] = char
 		setCode(newCode)
 
-		if (status !== 'default') {
-			setStatus('default')
-			setMessage('')
-		}
+		if (statusMessage) setStatusMessage(null)
 
 		if (char && index < 3) {
 			inputs.current[index + 1]?.focus()
@@ -79,12 +75,11 @@ export default function AccessCodeScreen() {
 		}
 	}
 
-
-const handleKeyPress = (e: Parameters<NonNullable<KeyPressEvent>>[0], index: number) => {
-    if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
-        inputs.current[index - 1]?.focus()
-    }
-}
+	const handleKeyPress = (e: Parameters<NonNullable<KeyPressEvent>>[0], index: number) => {
+		if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
+			inputs.current[index - 1]?.focus()
+		}
+	}
 
 	return (
 		<AppScreenAuthLayout
@@ -107,9 +102,9 @@ const handleKeyPress = (e: Parameters<NonNullable<KeyPressEvent>>[0], index: num
 								if (el) inputs.current[index] = el
 							}}
 							className={`w-14 h-16 rounded-xl text-center text-l1 font-jetbrains-medium border-2 ${
-								status === 'success'
+								statusMessage?.type === 'success'
 									? 'border-app-success'
-									: status === 'error'
+									: statusMessage?.type === 'error'
 										? 'border-app-error'
 										: 'border-transparent bg-app-light-gray focus:border-app-gray'
 							}`}
@@ -124,17 +119,10 @@ const handleKeyPress = (e: Parameters<NonNullable<KeyPressEvent>>[0], index: num
 					))}
 				</View>
 
-				<View className='h-6 justify-center items-center'>
-					{message !== '' && (
-						<Text 
-							className={`text-l3 text-center ${
-								status === 'success' ? 'text-app-success' : 'text-app-error'
-							}`}
-						>
-							{message}
-						</Text>
-					)}
-				</View>
+				<AppStatusMessage 
+					message={statusMessage?.text} 
+					type={statusMessage?.type} 
+				/>
 			</View>
 		</AppScreenAuthLayout>
 	)

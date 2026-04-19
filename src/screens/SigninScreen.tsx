@@ -5,10 +5,11 @@ import { ROUTES } from '@/core/lib/routes'
 import { authService } from '@/features/auth/api/auth.service'
 import { AppInput } from '@/shared/components/AppInput'
 import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
+import { AppStatusMessage } from '@/shared/components/AppStatusMessage' // Импортируем новый компонент
 import { translateError } from '@/shared/utils/errorMessages'
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { Keyboard, Text, View } from 'react-native'
+import { Keyboard, View } from 'react-native'
 
 export default function SigninScreen() {
 	const { values, errors, setErrors, handleChange } = useForm({
@@ -18,7 +19,8 @@ export default function SigninScreen() {
 
 	const [showPassword, setShowPassword] = useState(false)
 	const [loading, setLoading] = useState(false)
-	const [formError, setFormError] = useState<string | null>(null)
+	// Переходим на объектное состояние сообщения для гибкости
+	const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(null)
 
 	const validate = (email: string, pass: string) => {
 		const newErrors: { [key: string]: string } = {}
@@ -41,11 +43,11 @@ export default function SigninScreen() {
 
 	const handleInputChange = (field: 'email' | 'password', text: string) => {
 		handleChange(field, text)
-		if (formError) setFormError(null) 
+		if (statusMessage) setStatusMessage(null) 
 	}
 
 	const handleSignin = async () => {
-		setFormError(null)
+		setStatusMessage(null)
 		const cleanEmail = values.email.trim().toLowerCase()
 		const cleanPassword = values.password.trim()
 
@@ -62,14 +64,17 @@ export default function SigninScreen() {
 			}
 		} catch (error: any) {
 			const message = error.message.toLowerCase()
+			let text = ''
 
 			if (message.includes('invalid login credentials')) {
-				setFormError('Неверный емейл или пароль')
+				text = 'Неверный емейл или пароль'
 			} else if (message.includes('rate limit')) {
-				setFormError('Слишком много попыток. Попробуйте позже')
+				text = 'Слишком много попыток. Попробуйте позже'
 			} else {
-				setFormError(translateError(error.message))
+				text = translateError(error.message)
 			}
+			
+			setStatusMessage({ text, type: 'error' })
 		} finally {
 			setLoading(false)
 		}
@@ -96,6 +101,7 @@ export default function SigninScreen() {
 					error={errors.email}
 					autoCapitalize='none'
 					keyboardType='email-address'
+					editable={!loading}
 				/>
 				<AppInput
 					label='ваш пароль'
@@ -107,14 +113,14 @@ export default function SigninScreen() {
 					secureTextEntry={!showPassword}
 					error={errors.password}
 					autoCapitalize='none'
+					editable={!loading}
 				/>
-				<View className="h-5 justify-center items-center">
-					{formError && (
-						<Text className="text-app-error text-xs font-jetbrains-medium">
-							{formError}
-						</Text>
-					)}
-				</View>
+				
+				<AppStatusMessage 
+					message={statusMessage?.text} 
+					type={statusMessage?.type} 
+				/>
+
 			</View>
 		</AppScreenAuthLayout>
 	)
