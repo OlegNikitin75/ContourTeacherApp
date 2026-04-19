@@ -35,12 +35,12 @@ export default function AppButton({
 		<TouchableOpacity
 			onPress={handlePress}
 			disabled={isLoading && isDisabled}
-			className={`w-full bg-app-black h-16 rounded-4xl items-center justify-center mb-4 active:opacity-70 ${isLoading ? 'opacity-60' : ''} ${className}`}
+			className={`w-full bg-app-black h-16 rounded-4xl items-center justify-center active:opacity-70 ${isLoading ? 'opacity-60' : ''} ${className}`}
 		>
 			{isLoading ? (
 				<ActivityIndicator color={colors.appLightGray} />
 			) : (
-				<Text className='text-app-white font-jetbrains-mono text-l1'>{title}</Text>
+				<Text className='text-app-white text-l1'>{title}</Text>
 			)}
 		</TouchableOpacity>
 	)

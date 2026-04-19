@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/react": "~19.1.10",
     "postcss": "^8.5.8",
     "prettier-plugin-tailwindcss": "^0.7.2",

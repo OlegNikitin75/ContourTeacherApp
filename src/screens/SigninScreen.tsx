@@ -8,7 +8,7 @@ import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
 import { translateError } from '@/shared/utils/errorMessages'
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { View, Keyboard, Text } from 'react-native'
+import { Keyboard, Text, View } from 'react-native'
 
 export default function SigninScreen() {
 	const { values, errors, setErrors, handleChange } = useForm({
@@ -64,7 +64,6 @@ export default function SigninScreen() {
 		} catch (error: any) {
 			const message = error.message.toLowerCase()
 
-			// Вместо showAlert устанавливаем текст в formError
 			if (message.includes('invalid login credentials')) {
 				setFormError('Неверный емейл или пароль')
 			} else if (message.includes('rate limit')) {
@@ -80,6 +79,7 @@ export default function SigninScreen() {
 	return (
 		<AppScreenAuthLayout
 			sourceImg={IMAGES.SigninBG}
+			imageHeight={160}
 			title={`рады видеть вас\nв контуре`}
 			titleBtn='войти'
 			actionBtn={handleSignin}
@@ -109,8 +109,6 @@ export default function SigninScreen() {
 					error={errors.password}
 					autoCapitalize='none'
 				/>
-
-				{/* Контейнер для отображения серверной ошибки */}
 				<View className="h-5 justify-center items-center">
 					{formError && (
 						<Text className="text-app-error text-xs font-jetbrains-medium">
