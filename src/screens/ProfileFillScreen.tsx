@@ -1,12 +1,12 @@
 import { departments, positions } from '@/core/constants/data'
-import { authService } from '@/features/auth/api/auth.service'
 import AppDropdown from '@/shared/components/AppDropdown'
 import { AppInput } from '@/shared/components/AppInput'
-import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
-import { AppStatusMessage } from '@/shared/components/AppStatusMessage' // Импортируем
+import AppScreenAuthLayout from '@/shared/components/AppScreenOnboardingLayout'
+import { AppStatusMessage } from '@/shared/components/AppStatusMessage'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { View } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage' // Импортируем AsyncStorage
 
 export default function ProfileFillScreen() {
 	const [firstName, setFirstName] = useState('')
@@ -63,25 +63,33 @@ export default function ProfileFillScreen() {
 			setLoading(true)
 			setStatusMessage(null)
 
-			await authService.completeProfile(
-				firstName.trim(),
-				lastName.trim(),
-				middleName.trim(),
-				position!,
-				department!
-			)
+			// 1. Формируем локальный объект профиля преподавателя
+			const profileData = {
+				firstName: firstName.trim(),
+				lastName: lastName.trim(),
+				middleName: middleName.trim(),
+				position: position!,
+				department: department!,
+				isComplete: true
+			}
+
+			// 2. Сохраняем в AsyncStorage
+			await AsyncStorage.setItem('user_profile', JSON.stringify(profileData))
+			
+			// Также сохраняем статус, чтобы RootLayout понимал, что онбординг пройден
+			await AsyncStorage.setItem('user_role', 'teacher') // По умолчанию или из ключа доступа
 
 			setLoading(false)
 			setStatusMessage({ text: 'профиль успешно заполнен!', type: 'success' })
 
-			// Задержка работает, так как RootLayout теперь стабилен
+			// 3. Перенаправляем на вкладки
 			setTimeout(() => {
 				router.replace('/(tabs)')
 			}, 2000)
 
 		} catch (error: any) {
 			setLoading(false)
-			setStatusMessage({ text: error.message || 'не удалось сохранить профиль', type: 'error' })
+			setStatusMessage({ text: 'не удалось сохранить профиль локально', type: 'error' })
 		}
 	}
 

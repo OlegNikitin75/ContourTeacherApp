@@ -1,17 +1,14 @@
 import { IMAGES } from '@/assets'
 import { ROUTES } from '@/core/lib/routes'
-import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
+import AppScreenOnboardingLayout from '@/shared/components/AppScreenOnboardingLayout'
 
 export default function IntroScreen() {
 	return (
-		<AppScreenAuthLayout
+		<AppScreenOnboardingLayout
 			sourceImg={IMAGES.IntroBG}
 			title={'удобный помощник\nв вашем телефоне'}
-			titleBtn='зарегистрироваться'
-			bottomText='уже есть аккаунт?'
-			bottomLinkText='войти'
+			titleBtn='продолжить'
 			hrefBtn={ROUTES.ACCESS_CODE}
-			hrefLink={ROUTES.SIGNIN}
 		/>
 	)
 }

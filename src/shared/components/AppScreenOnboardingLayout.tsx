@@ -23,7 +23,7 @@ interface AppScreenAuthLayoutProps {
 	children?: React.ReactNode
 }
 
-export default function AppScreenAuthLayout({
+export default function AppScreenOnboardingLayout({
 	sourceImg,
 	imageHeight,
 	title,
@@ -44,7 +44,7 @@ export default function AppScreenAuthLayout({
 		<View className='flex-1 bg-app-light-gray'>
 			<StatusBar style='dark' />
 			<SafeAreaView style={{ flex: 1 }} edges={['top']}>
-				<HeaderTitle firstItemTitle='контур' secondItemTitle='препод' />
+				<HeaderTitle firstItemTitle='контур' secondItemTitle='графика' />
 
 				<KeyboardAwareScrollView
 					contentContainerStyle={{ flexGrow: 1 }}

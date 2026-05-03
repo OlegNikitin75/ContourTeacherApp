@@ -1,5 +1,5 @@
 export { default as IntroScreen } from './IntroScreen'
 export { default as AccessCodeScreen } from './AccessCodeScreen'
-export { default as SigninScreen } from './SigninScreen'
-export { default as SignupScreen } from './SignupScreen'
 export { default as ProfileFillScreen } from './ProfileFillScreen'
+export { default as ProfileScreen } from './ProfileScreen'
+export { default as HomeScreen } from './HomeScreen'

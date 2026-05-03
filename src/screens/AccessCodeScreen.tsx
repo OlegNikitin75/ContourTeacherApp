@@ -1,129 +1,102 @@
-import { ROUTES } from '@/core/lib/routes'
+import { AppInput } from '@/shared/components/AppInput'
+import AppScreenOnboardingLayout from '@/shared/components/AppScreenOnboardingLayout'
+import { AppStatusMessage } from '@/shared/components/AppStatusMessage'
+import { router } from 'expo-router'
+import { useState } from 'react'
+import { View } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { supabase } from '@/core/lib/supabase'
-import AppScreenAuthLayout from '@/shared/components/AppScreenAuthLayout'
-import { AppStatusMessage } from '@/shared/components/AppStatusMessage' // Импортируем
-import { useRouter } from 'expo-router'
-import { styled } from 'nativewind'
-import { ComponentProps, useRef, useState } from 'react'
-import { Keyboard, TextInput, View } from 'react-native'
-
-type KeyPressEvent = ComponentProps<typeof TextInput>['onKeyPress']
-const StyledInput = styled(TextInput)
+import { ROUTES } from '@/core/lib/routes'
 
 export default function AccessCodeScreen() {
-	const [code, setCode] = useState(['', '', '', ''])
-	const inputs = useRef<TextInput[]>([])
-	const router = useRouter()
+	const [accessCode, setAccessCode] = useState('')
 	const [loading, setLoading] = useState(false)
-	
-	// Приводим стейт сообщения к единому стандарту объекта
+	const [error, setError] = useState<string | null>(null)
 	const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(null)
 
-	const isSuccess = statusMessage?.type === 'success'
+	const handleCodeChange = (value: string) => {
+		setAccessCode(value)
+		if (error) setError(null)
+		if (statusMessage) setStatusMessage(null)
+	}
 
-	const verify = async (codeToVerify?: string) => {
-		const fullCode = codeToVerify || code.join('')
+	const handleVerifyCode = async () => {
+		// Очищаем пробелы и переводим в нижний регистр для точного совпадения
+		const trimmedCode = accessCode.trim().toLowerCase()
 		
-		if (fullCode.length < 4 || loading || isSuccess) return
+		if (!trimmedCode) {
+			setError('введите ключ доступа')
+			return
+		}
 
 		try {
 			setLoading(true)
 			setStatusMessage(null)
-			
-			const { data: isValid, error } = await supabase.rpc('verify_and_consume_code', { 
-				input_code: fullCode 
-			})
 
-			if (error) throw error
+			const { data, error: sbError } = await supabase
+				.from('access_keys')
+				.select('role')
+				.eq('key_value', trimmedCode)
+				.maybeSingle()
 
-			if (isValid) {
-				setStatusMessage({ text: 'Доступ разрешен', type: 'success' })
-				Keyboard.dismiss()
-				
-				setTimeout(() => {
-					router.replace({ 
-						pathname: `/(auth)${ROUTES.SIGNUP}`, 
-						params: { verified: 'true' } 
-					})
-				}, 1000)
-			} else {
-				setStatusMessage({ text: 'Неверный код доступа', type: 'error' })
-				setCode(['', '', '', ''])
-				inputs.current[0]?.focus()
+			if (sbError) {
+				console.error('Ошибка Supabase при запросе:', sbError)
+				throw new Error('Ошибка связи с сервером. Попробуйте позже')
 			}
-		} catch (e) {
-			setStatusMessage({ text: 'Ошибка сети или сервера', type: 'error' })
+
+			if (!data) {
+				console.warn('Ключ не найден в таблице access_keys:', trimmedCode)
+				throw new Error('неверный ключ доступа, обратитесь к руководителю')
+			}
+
+			console.log('Ключ верный! Получена роль:', data.role)
+
+			// Сохраняем ключ и роль локально в память устройства
+			await AsyncStorage.setItem('access_key', trimmedCode)
+			await AsyncStorage.setItem('user_role', data.role)
+
+			setStatusMessage({ text: 'ключ успешно подтвержден!', type: 'success' })
+
+			// Переходим на экран заполнения профиля преподавателя
+			setTimeout(() => {
+				router.replace(`/(onboarding)/${ROUTES.PROFILE_FILL}`)
+			}, 1500)
+
+		} catch (err: any) {
+			setStatusMessage({ 
+				text: err.message || 'ошибка проверки ключа', 
+				type: 'error' 
+			})
 		} finally {
 			setLoading(false)
 		}
 	}
 
-	const handleChange = (text: string, index: number) => {
-		const char = text.replace(/[^0-9]/g, '').slice(-1)
-		const newCode = [...code]
-		newCode[index] = char
-		setCode(newCode)
-
-		if (statusMessage) setStatusMessage(null)
-
-		if (char && index < 3) {
-			inputs.current[index + 1]?.focus()
-		}
-
-		if (newCode.join('').length === 4) {
-			verify(newCode.join(''))
-		}
-	}
-
-	const handleKeyPress = (e: Parameters<NonNullable<KeyPressEvent>>[0], index: number) => {
-		if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
-			inputs.current[index - 1]?.focus()
-		}
-	}
-
 	return (
-		<AppScreenAuthLayout
-			title='Проверим доступ к приложению преподавателя'
-			subtitle='Админ кафедры выдал вам уникальный код для доступа'
-			titleBtn='проверить код'
-			actionBtn={() => verify()}
-			isLoading={loading || isSuccess}
-			disabled={loading || isSuccess}
+		<AppScreenOnboardingLayout
+			title='введите ключ доступа'
+			titleBtn='продолжить'
+			actionBtn={handleVerifyCode}
+			isLoading={loading}
+			disabled={loading || statusMessage?.type === 'success'}
 		>
-			<View className='flex-col items-center gap-4 mb-6'>
-				<View
-					className='flex-row justify-center items-center gap-3'
-					pointerEvents={loading || isSuccess ? 'none' : 'auto'}
-				>
-					{code.map((digit, index) => (
-						<StyledInput
-							key={index}
-							ref={el => {
-								if (el) inputs.current[index] = el
-							}}
-							className={`w-14 h-16 rounded-xl text-center text-l1 font-jetbrains-medium border-2 ${
-								statusMessage?.type === 'success'
-									? 'border-app-success'
-									: statusMessage?.type === 'error'
-										? 'border-app-error'
-										: 'border-transparent bg-app-light-gray focus:border-app-gray'
-							}`}
-							maxLength={1}
-							keyboardType='number-pad'
-							value={digit}
-							onChangeText={text => handleChange(text, index)}
-							onKeyPress={e => handleKeyPress(e, index)}
-							editable={!loading && !isSuccess}
-							contextMenuHidden 
-						/>
-					))}
-				</View>
+			<View className='gap-y-4'>
+				<AppInput
+					label='ваш секретный ключ'
+					placeholder='например: admin_key_777'
+					value={accessCode}
+					onChangeText={handleCodeChange}
+					error={error || undefined}
+					editable={!loading && statusMessage?.type !== 'success'}
+					autoCapitalize='none'
+					autoCorrect={false}
+				/>
 
-				<AppStatusMessage 
-					message={statusMessage?.text} 
-					type={statusMessage?.type} 
+				<AppStatusMessage
+					message={statusMessage?.text}
+					type={statusMessage?.type}
 				/>
 			</View>
-		</AppScreenAuthLayout>
+		</AppScreenOnboardingLayout>
 	)
 }

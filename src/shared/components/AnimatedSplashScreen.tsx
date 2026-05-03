@@ -51,7 +51,7 @@ export default function AnimatedSplashScreen({ onFinish }: AnimatedSplashScreenP
 				<View className='w-[2.5px] h-8 bg-app-black rounded-full mx-2.5' />
 				<View className='overflow-hidden'>
 					<Animated.Text style={rightTextStyle} className='text-h2 text-app-accent'>
-						препод
+						графика
 					</Animated.Text>
 				</View>
 			</View>

@@ -1,1 +1,0 @@
-export { SigninScreen as default } from '@/screens'
