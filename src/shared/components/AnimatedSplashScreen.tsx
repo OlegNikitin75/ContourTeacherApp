@@ -1,4 +1,3 @@
-import { SplashScreen } from 'expo-router'
 import { useEffect } from 'react'
 import { View } from 'react-native'
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay } from 'react-native-reanimated'
@@ -12,9 +11,8 @@ export default function AnimatedSplashScreen({ onFinish }: AnimatedSplashScreenP
 	const opacity = useSharedValue(0)
 
 	useEffect(() => {
-		// 1. Запускаем анимации появления текста
 		textTranslate.value = withTiming(0, { 
-			duration: 1200, 
+			duration: 2000, 
 			easing: Easing.out(Easing.exp) 
 		})
 		
@@ -22,18 +20,7 @@ export default function AnimatedSplashScreen({ onFinish }: AnimatedSplashScreenP
 			duration: 800 
 		}))
 
-		// 2. Таймер на завершение
-		const timer = setTimeout(async () => {
-			try {
-				// Скрываем нативный сплеш ровно перед тем, как отдать управление
-				await SplashScreen.hideAsync()
-			} catch (e) {
-				// Игнорируем возможные ошибки повторного скрытия
-			} finally {
-				onFinish()
-			}
-		}, 2000)
-
+		const timer = setTimeout(onFinish, 2000)
 		return () => clearTimeout(timer)
 	}, [])
 
@@ -49,18 +36,25 @@ export default function AnimatedSplashScreen({ onFinish }: AnimatedSplashScreenP
 
 	return (
 		<View className='flex-1 justify-center items-center bg-app-light-gray'>
-			<View className='flex-row items-center'>
-				<View className='overflow-hidden min-w-30 items-end px-2'>
+			<View className='flex-row items-center justify-center'>
+				
+				{/* ЛЕВАЯ СТОРОНА — КОНТУР */}
+				<View className='overflow-hidden w-28 items-end pr-2.5'>
 					<Animated.Text style={leftTextStyle} className='text-h2 text-app-black'>
 						контур
 					</Animated.Text>
 				</View>
-				<View className='w-[2.5px] h-8 bg-app-black rounded-full mx-2.5' />
-				<View className='overflow-hidden'>
+
+				{/* ВЕРТИКАЛЬНАЯ РАЗДЕЛИТЕЛЬНАЯ ПАЛОЧКА */}
+				<View className='w-[2.5px] h-8 bg-app-black rounded-full' />
+
+				{/* ПРАВАЯ СТОРОНА — ГРАФИКА */}
+				<View className='overflow-hidden w-28 items-start pl-2.5'>
 					<Animated.Text style={rightTextStyle} className='text-h2 text-app-accent'>
 						графика
 					</Animated.Text>
 				</View>
+
 			</View>
 		</View>
 	)

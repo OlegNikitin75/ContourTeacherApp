@@ -8,7 +8,7 @@ export default function OnboardingLayout() {
 				headerShown: false
 			}}
 		>
-			<Stack.Screen name='intro' />
+			<Stack.Screen name='index' />
 			<Stack.Screen name='access-code' />
 			<Stack.Screen name='profile-fill' />
 		</Stack>
