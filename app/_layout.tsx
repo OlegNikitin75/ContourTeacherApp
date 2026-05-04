@@ -9,7 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { AlertProvider } from '@/providers/AlertContext'
 import AnimatedSplashScreen from '@/shared/components/AnimatedSplashScreen'
-import { getLocalSetting, initLocalDatabase, insertTestStudents } from '@/core/lib/db'
+import { getLocalSetting, initLocalDatabase } from '@/core/lib/db'
 
 SplashScreen.preventAutoHideAsync()
 const queryClient = new QueryClient()
@@ -18,9 +18,6 @@ export default function RootLayout() {
 	const [userRole, setUserRole] = useState<string | null>(null)
 	const [initialized, setInitialized] = useState(false)
 	const [showContent, setShowContent] = useState(false)
-	
-	// НОВЫЙ СТЕЙТ: Флаг готовности навигации (предотвращает мерцание)
-	const [isNavigationReady, setIsNavigationReady] = useState(false)
 
 	const segments = useSegments()
 	const router = useRouter()
@@ -30,58 +27,52 @@ export default function RootLayout() {
 		'JetBrainsMono-Medium': JetBrainsMono_500Medium
 	})
 
-	// 1. Проверяем локальную память при старте
-useEffect(() => {
-	async function checkAccess() {
-		try {
-			// Инициализируем базу данных SQLite
-			initLocalDatabase()
-
-			// insertTestStudents()
-			
-			// Читаем роль из SQLite (вместо AsyncStorage)
-			const savedRole = getLocalSetting('user_role')
-			setUserRole(savedRole)
-		} catch (e) {
-			console.error(e)
-		} finally {
-			setInitialized(true)
-		}
-	}
-	checkAccess()
-}, [])
-
-	// 2. Навигационный Guard с подтверждением готовности
+	// 1. Инициализация базы данных и роли
 	useEffect(() => {
-		if (!initialized || !fontsLoaded) return
+		async function checkAccess() {
+			try {
+				initLocalDatabase()
+				const savedRole = getLocalSetting('user_role')
+				setUserRole(savedRole)
+			} catch (e) {
+				console.error('Ошибка при инициализации:', e)
+			} finally {
+				setInitialized(true)
+			}
+		}
+		checkAccess()
+	}, [])
 
-		const inOnboarding = segments[0] === '(onboarding)'
+	// 2. Навигационный Guard
+	useEffect(() => {
+		// Запускаем навигацию только когда шрифты загружены, база готова и анимация закончилась
+		if (!initialized || !fontsLoaded || !showContent) return
 
-		// Если роль сохранена в телефоне
+		const inOnboarding = segments[0] === '(onboarding)' || segments[0] === 'onboarding'
+
 		if (userRole) {
 			if (inOnboarding) {
 				router.replace('/(tabs)')
-			} else {
-				// Маршрут уже правильный, навигация готова!
-				setIsNavigationReady(true)
 			}
-		} 
-		// Если роли нет и мы не в онбординге — отправляем на первый запуск
-		else if (!inOnboarding) {
+		} else if (!inOnboarding) {
 			router.replace('/(onboarding)')
-		} else {
-			// Мы на правильном экране онбординга, навигация готова!
-			setIsNavigationReady(true)
 		}
-	}, [userRole, initialized, segments, fontsLoaded])
+	}, [userRole, initialized, segments, fontsLoaded, showContent])
 
-	// ИСПРАВЛЕНО: Ждем, пока навигация определит конечный экран
-	if (!fontsLoaded || !initialized || !isNavigationReady || !showContent) {
+	// 3. Скрываем нативный сплеш, чтобы показать AnimatedSplashScreen
+	useEffect(() => {
+		if (fontsLoaded && initialized) {
+			// Нативный сплеш уходит, уступая место вашему анимированному сплешу
+			SplashScreen.hideAsync()
+		}
+	}, [fontsLoaded, initialized])
+
+	// ИСПРАВЛЕНО: Пока не завершится кастомная анимация, показываем AnimatedSplashScreen
+	if (!fontsLoaded || !initialized || !showContent) {
 		return (
 			<AnimatedSplashScreen
 				onFinish={() => {
-					setShowContent(true)
-					SplashScreen.hideAsync()
+					setShowContent(true) // Только теперь пускаем в приложение
 				}}
 			/>
 		)
@@ -92,7 +83,7 @@ useEffect(() => {
 			<SafeAreaProvider>
 				<QueryClientProvider client={queryClient}>
 					<AlertProvider>
-						<StatusBar style='dark' />
+						<StatusBar style='dark' translucent={true} backgroundColor="transparent" />
 						<Stack screenOptions={{ headerShown: false }}>
 							<Stack.Screen name='(onboarding)' options={{ animation: 'none' }} />
 							<Stack.Screen name='(tabs)' options={{ animation: 'none' }} />

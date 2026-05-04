@@ -12,23 +12,30 @@ export default function AnimatedSplashScreen({ onFinish }: AnimatedSplashScreenP
 	const opacity = useSharedValue(0)
 
 	useEffect(() => {
-    // Безопасно скрываем нативный сплеш
-    SplashScreen.hideAsync().catch(() => {});
+		// 1. Запускаем анимации появления текста
+		textTranslate.value = withTiming(0, { 
+			duration: 1200, 
+			easing: Easing.out(Easing.exp) 
+		})
+		
+		opacity.value = withDelay(100, withTiming(1, { 
+			duration: 800 
+		}))
 
-    // Запускаем анимации
-    textTranslate.value = withTiming(0, { 
-        duration: 2000, 
-        easing: Easing.out(Easing.exp) 
-    });
-    
-    opacity.value = withDelay(100, withTiming(1, { 
-        duration: 800 
-    }));
+		// 2. Таймер на завершение
+		const timer = setTimeout(async () => {
+			try {
+				// Скрываем нативный сплеш ровно перед тем, как отдать управление
+				await SplashScreen.hideAsync()
+			} catch (e) {
+				// Игнорируем возможные ошибки повторного скрытия
+			} finally {
+				onFinish()
+			}
+		}, 2000)
 
-    const timer = setTimeout(onFinish, 2000);
-    return () => clearTimeout(timer);
-}, []);
-
+		return () => clearTimeout(timer)
+	}, [])
 
 	const leftTextStyle = useAnimatedStyle(() => ({
 		transform: [{ translateX: -textTranslate.value }],

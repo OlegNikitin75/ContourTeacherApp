@@ -12,6 +12,7 @@
         "tinted": "./src/assets/icons/ios-tinted.png"
       }
     },
+   
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#998FFB",
