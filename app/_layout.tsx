@@ -6,10 +6,10 @@ import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { AlertProvider } from '@/providers/AlertContext'
 import AnimatedSplashScreen from '@/shared/components/AnimatedSplashScreen'
+import { getLocalSetting, initLocalDatabase, insertTestStudents } from '@/core/lib/db'
 
 SplashScreen.preventAutoHideAsync()
 const queryClient = new QueryClient()
@@ -31,20 +31,25 @@ export default function RootLayout() {
 	})
 
 	// 1. Проверяем локальную память при старте
-	useEffect(() => {
-		async function checkAccess() {
-			try {
-				const savedRole = await AsyncStorage.getItem('user_role')
-				setUserRole(savedRole)
-			} catch (e) {
-				console.error('Failed to load user role from storage', e)
-				setUserRole(null)
-			} finally {
-				setInitialized(true)
-			}
+useEffect(() => {
+	async function checkAccess() {
+		try {
+			// Инициализируем базу данных SQLite
+			initLocalDatabase()
+
+			// insertTestStudents()
+			
+			// Читаем роль из SQLite (вместо AsyncStorage)
+			const savedRole = getLocalSetting('user_role')
+			setUserRole(savedRole)
+		} catch (e) {
+			console.error(e)
+		} finally {
+			setInitialized(true)
 		}
-		checkAccess()
-	}, [])
+	}
+	checkAccess()
+}, [])
 
 	// 2. Навигационный Guard с подтверждением готовности
 	useEffect(() => {
