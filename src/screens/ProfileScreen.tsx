@@ -1,65 +1,61 @@
-import React, { useState, useRef } from 'react'
-import { View, TouchableOpacity, Text } from 'react-native'
+import React, { useState } from 'react'
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
+
+import { colors, spacing, corner, typography } from '@/core/constants/theme'
 import AppSnackbar from '@/shared/components/AppSnackbar'
 import { ROUTES } from '@/core/lib/routes'
 
 export default function ProfileScreen() {
 	const [snackbarVisible, setSnackbarVisible] = useState(false)
-	const logoutTimer = useRef<NodeJS.Timeout | null>(null)
 
 	const triggerLogoutProcess = () => {
-    setSnackbarVisible(true)
+		setSnackbarVisible(true)
+	}
 
-    logoutTimer.current = setTimeout(async () => {
-        try {
-            // Очищаем локальное хранилище
-            await AsyncStorage.multiRemove(['access_key', 'user_role', 'user_profile'])
-            
-            // 2. Исправлено: Перенаправляем на заглавный экран Intro
-            router.replace(ROUTES.INTRO) 
-        } catch (e) {
-            console.error(e)
-        }
-    }, 4000)
-}
-
-	const cancelLogout = () => {
-		// Очищаем таймер выхода
-		if (logoutTimer.current) {
-			clearTimeout(logoutTimer.current)
+	const handleLogoutConfirm = async () => {
+		try {
+			await AsyncStorage.multiRemove(['access_key', 'user_role', 'user_profile'])
+			router.replace(ROUTES.INTRO) 
+		} catch (e) {
+			console.error(e)
 		}
-		// Скрываем Snackbar
-		setSnackbarVisible(false)
 	}
 
 	return (
-		<View className='flex-1 justify-between p-4 bg-white'>
+		<View style={styles.container}>
 			<View>
-				{/* Здесь ваш контент профиля */}
-				<Text className='text-lg font-bold'>Профиль преподавателя</Text>
+				<Text style={styles.title}>профиль преподавателя</Text>
 			</View>
 
-			{/* Кнопка выхода */}
 			<TouchableOpacity 
 				onPress={triggerLogoutProcess}
-				className='border border-red-200 bg-red-50 rounded-xl p-4 active:bg-red-100 mb-4'
+				activeOpacity={0.7}
+				style={styles.logoutButton}
 			>
-				<Text className='text-red-600 font-bold text-center text-base'>
-					Выйти из профиля
-				</Text>
+				<Text style={styles.logoutText}>выйти из профиля</Text>
 			</TouchableOpacity>
 
-			{/* Наш кастомный Snackbar */}
 			<AppSnackbar
 				visible={snackbarVisible}
-				message='Выход из профиля будет выполнен через 4 секунды...'
-				actionLabel='ОТМЕНА'
-				onActionPress={cancelLogout}
-				onDismiss={() => setSnackbarVisible(false)}
+				message='выход из профиля будет выполнен через %seconds% сек...'
+				actionLabel='отмена'
+				onActionPress={() => setSnackbarVisible(false)}
+				onDismiss={handleLogoutConfirm} 
 				duration={4000}
 			/>
 		</View>
 	)
 }
+
+const styles = StyleSheet.create({
+	container: 
+	{ flex: 1, justifyContent: 'space-between', padding: spacing(4), backgroundColor: colors.appWhite },
+	title: { ...typography.h3, color: colors.appBlack },
+	logoutButton: { borderWidth: 1, borderColor: colors.appLightGray, backgroundColor: colors.appLightGray, borderRadius: corner(3), padding: spacing(4), marginBottom: spacing(4), alignItems: 'center' },
+	logoutText: 
+	{ ...typography.l1,
+		 color: colors.appError 
+		},
+})
