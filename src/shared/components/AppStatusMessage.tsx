@@ -11,7 +11,8 @@ interface AppStatusMessageProps {
 }
 
 export function AppStatusMessage({ message, type = 'error', containerStyle }: AppStatusMessageProps) {
-	if (!message) return <View style={styles.emptyStub} />
+	// Если сообщения нет, возвращаем пустой контейнер с минимальной высотой
+	if (!message) return <View style={[styles.emptyStub, containerStyle]} />
 
 	return (
 		<View style={[styles.container, containerStyle]}>
@@ -22,18 +23,21 @@ export function AppStatusMessage({ message, type = 'error', containerStyle }: Ap
 
 const styles = StyleSheet.create({
 	emptyStub: {
-		height: spacing(6)
+		minHeight: spacing(6)
 	},
 	container: {
-		height: spacing(6),
+		minHeight: spacing(6),
 		marginBottom: spacing(3),
 		paddingHorizontal: spacing(4),
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+
+		paddingVertical: spacing(1)
 	},
 	text: {
 		...typography.l3,
-		textAlign: 'center'
+		textAlign: 'center',
+		flexShrink: 1
 	},
 	textSuccess: {
 		color: colors.appSuccess

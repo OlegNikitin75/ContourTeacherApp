@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
@@ -11,16 +11,22 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import AnimatedSplashScreen from '@/shared/components/AnimatedSplashScreen'
 
-SplashScreen.preventAutoHideAsync()
+SplashScreen.preventAutoHideAsync().catch(() => {})
 const queryClient = new QueryClient()
 
 export default function RootLayout() {
-	const [showContent, setShowContent] = useState(false) // Управляем показом контента
+	const [showContent, setShowContent] = useState(false)
 
 	const [fontsLoaded] = useFonts({
 		'JetBrainsMono-Regular': JetBrainsMono_400Regular,
 		'JetBrainsMono-Medium': JetBrainsMono_500Medium
 	})
+
+	useEffect(() => {
+		if (fontsLoaded) {
+			SplashScreen.hideAsync().catch(() => {})
+		}
+	}, [fontsLoaded])
 
 	if (!fontsLoaded) return null
 
@@ -31,15 +37,12 @@ export default function RootLayout() {
 					<StatusBar style='dark' translucent={true} backgroundColor='transparent' />
 
 					{!showContent ? (
-						/* 1. Сначала показываем вашу красивую анимацию */
 						<AnimatedSplashScreen
 							onFinish={() => {
 								setShowContent(true)
-								SplashScreen.hideAsync() // Скрываем нативный сплеш ПОСЛЕ анимации
 							}}
 						/>
 					) : (
-						/* 2. Только после анимации открываем навигацию */
 						<Stack screenOptions={{ headerShown: false }}>
 							<Stack.Screen name='index' />
 							<Stack.Screen name='(onboarding)' options={{ animation: 'none' }} />
