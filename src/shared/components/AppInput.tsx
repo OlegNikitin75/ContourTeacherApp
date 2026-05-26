@@ -1,6 +1,6 @@
-import { colors } from '@/core/constants/theme'
+import { colors, spacing, corner, typography } from '@/core/constants/theme'
 import React, { useState } from 'react'
-import { View, Text, TextInput, TextInputProps, TouchableOpacity } from 'react-native'
+import { View, Text, TextInput, TextInputProps, TouchableOpacity, StyleSheet } from 'react-native'
 import { BaseIcon, IconContent } from './BaseIcon'
 
 interface AppInputProps extends TextInputProps {
@@ -14,34 +14,80 @@ export const AppInput = ({ label, error, icon: Icon, onIconPress, ...props }: Ap
 	const [isFocused, setIsFocused] = useState(false)
 
 	return (
-		<View className='mb-4 w-full'>
-			{label && <Text className='text-h4 text-app-black mb-3'>{label}</Text>}
+		<View style={styles.container}>
+			{label && <Text style={styles.label}>{label}</Text>}
 
 			<View
-				className={`
-        bg-app-light-gray border-2 rounded-lg px-5 py-2
-        flex-row items-center justify-between
-        ${error ? 'border-app-error' : isFocused ? 'border-black' : 'border-transparent'}
-    `}
+				style={[
+					styles.inputWrapper,
+					error ? styles.borderError : isFocused ? styles.borderFocused : styles.borderDefault
+				]}
 			>
 				<TextInput
 					{...props}
 					onFocus={() => setIsFocused(true)}
 					onBlur={() => setIsFocused(false)}
-					className='text-app-black text-l1 flex-1'
+					style={styles.input}
 					placeholderTextColor={colors.appGray}
 					autoCapitalize='none'
 					autoCorrect={false}
 				/>
 
 				{Icon && (
-					<TouchableOpacity onPress={onIconPress} className='ml-2 p-1'>
+					<TouchableOpacity onPress={onIconPress} style={styles.iconButton} activeOpacity={0.7}>
 						<BaseIcon icon={Icon} />
 					</TouchableOpacity>
 				)}
 			</View>
 
-			{error && <Text className='text-app-error text-l3 mt-1 ml-1'>{error}</Text>}
+			{error && <Text style={styles.errorText}>{error}</Text>}
 		</View>
 	)
 }
+
+const styles = StyleSheet.create({
+	container: {
+		width: '100%',
+	},
+	label: {
+		...typography.h4,
+		color: colors.appBlack,
+		marginBottom: spacing(2),
+	},
+	inputWrapper: {
+		backgroundColor: colors.appLightGray,
+		borderWidth: 2,
+		borderRadius: corner(2),
+		paddingHorizontal: spacing(5),
+		height: spacing(11),
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+	},
+	borderDefault: {
+		borderColor: 'transparent',
+	},
+	borderFocused: {
+		borderColor: colors.appBlack,
+	},
+	borderError: {
+		borderColor: colors.appError,
+	},
+	input: {
+		...typography.l1,
+		color: colors.appBlack,
+		flex: 1,
+		height: '100%',
+		padding: 0,
+	},
+	iconButton: {
+		marginLeft: spacing(2),
+		padding: spacing(1),
+	},
+	errorText: {
+		...typography.l3,
+		color: colors.appError,
+		marginTop: spacing(1),
+		marginLeft: spacing(1),
+	},
+})

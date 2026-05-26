@@ -7,7 +7,7 @@ import { departments, positions } from '@/core/constants/data'
 import { spacing } from '@/core/constants/theme'
 import AppDropdown from '@/shared/components/AppDropdown'
 import { AppInput } from '@/shared/components/AppInput'
-import AppScreenAuthLayout from '@/shared/components/AppScreenOnboardingLayout'
+import AppScreenOnboardingLayout from '@/shared/components/AppScreenOnboardingLayout'
 import { AppStatusMessage } from '@/shared/components/AppStatusMessage'
 
 export default function ProfileFillScreen() {
@@ -93,7 +93,7 @@ const handleFieldChange = <T extends string | null>(
 	}
 
 	return (
-		<AppScreenAuthLayout
+		<AppScreenOnboardingLayout
 			title='расскажите немного о себе'
 			titleBtn='завершить'
 			actionBtn={handleCompleteProfile}
@@ -149,7 +149,7 @@ const handleFieldChange = <T extends string | null>(
 					type={statusMessage?.type}
 				/>
 			</View>
-		</AppScreenAuthLayout>
+		</AppScreenOnboardingLayout>
 	)
 }
 
