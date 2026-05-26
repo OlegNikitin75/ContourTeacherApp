@@ -1,7 +1,9 @@
-import { colors, spacing, typography } from '@/core/constants/theme'
 import { useEffect } from 'react'
-import { View, StyleSheet } from 'react-native'
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, withDelay } from 'react-native-reanimated'
+
+import { StyleSheet, View } from 'react-native'
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated'
+
+import { colors, spacing, typography } from '@/core/constants/theme'
 
 interface AnimatedSplashScreenProps {
 	onFinish: () => void
@@ -12,14 +14,17 @@ export default function AnimatedSplashScreen({ onFinish }: AnimatedSplashScreenP
 	const opacity = useSharedValue(0)
 
 	useEffect(() => {
-		textTranslate.value = withTiming(0, { 
-			duration: 2000, 
-			easing: Easing.out(Easing.exp) 
+		textTranslate.value = withTiming(0, {
+			duration: 2000,
+			easing: Easing.out(Easing.exp)
 		})
-		
-		opacity.value = withDelay(100, withTiming(1, { 
-			duration: 800 
-		}))
+
+		opacity.value = withDelay(
+			100,
+			withTiming(1, {
+				duration: 800
+			})
+		)
 
 		const timer = setTimeout(onFinish, 2000)
 		return () => clearTimeout(timer)
@@ -39,15 +44,11 @@ export default function AnimatedSplashScreen({ onFinish }: AnimatedSplashScreenP
 		<View style={styles.container}>
 			<View style={styles.containerText}>
 				<View style={styles.leftSide}>
-					<Animated.Text style={[styles.textLeft, leftTextStyle]}>
-						контур
-					</Animated.Text>
+					<Animated.Text style={[styles.textLeft, leftTextStyle]}>контур</Animated.Text>
 				</View>
 				<View style={styles.divider} />
 				<View style={styles.rightSide}>
-					<Animated.Text style={[styles.textRight, rightTextStyle]}>
-						графика
-					</Animated.Text>
+					<Animated.Text style={[styles.textRight, rightTextStyle]}>графика</Animated.Text>
 				</View>
 			</View>
 		</View>
@@ -60,37 +61,37 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.appLightGray,
 		alignItems: 'center',
 		justifyContent: 'center',
-		padding: spacing(5),
+		padding: spacing(5)
 	},
 	containerText: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center',
+		justifyContent: 'center'
 	},
 	leftSide: {
 		overflow: 'hidden',
 		width: spacing(28),
 		alignItems: 'flex-end',
-		paddingRight: spacing(2.5), 
+		paddingRight: spacing(2.5)
 	},
 	rightSide: {
 		overflow: 'hidden',
-		width: spacing(28), 
+		width: spacing(28),
 		alignItems: 'flex-start',
-		paddingLeft: spacing(2.5),
+		paddingLeft: spacing(2.5)
 	},
 	divider: {
 		width: 2.5,
-		height: spacing(8), 
+		height: spacing(8),
 		backgroundColor: colors.appBlack,
-		borderRadius: 999, 
+		borderRadius: 999
 	},
 	textLeft: {
 		...typography.h2,
-		color: colors.appBlack,
+		color: colors.appBlack
 	},
 	textRight: {
 		...typography.h2,
-		color: colors.appAccent,
+		color: colors.appAccent
 	}
 })

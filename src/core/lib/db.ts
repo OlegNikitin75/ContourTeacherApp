@@ -57,10 +57,7 @@ export const initLocalDatabase = () => {
 // Сохранить или обновить настройку
 export const setLocalSetting = (key: string, value: string) => {
 	try {
-		db.runSync(
-			`INSERT OR REPLACE INTO local_settings (key, value) VALUES (?, ?);`,
-			[key, value]
-		)
+		db.runSync(`INSERT OR REPLACE INTO local_settings (key, value) VALUES (?, ?);`, [key, value])
 	} catch (error) {
 		console.error(`Ошибка записи настройки ${key}:`, error)
 	}
@@ -69,10 +66,7 @@ export const setLocalSetting = (key: string, value: string) => {
 // Получить настройку
 export const getLocalSetting = (key: string): string | null => {
 	try {
-		const result = db.getFirstSync<{ value: string }>(
-			`SELECT value FROM local_settings WHERE key = ?;`,
-			[key]
-		)
+		const result = db.getFirstSync<{ value: string }>(`SELECT value FROM local_settings WHERE key = ?;`, [key])
 		return result ? result.value : null
 	} catch (error) {
 		console.error(`Ошибка чтения настройки ${key}:`, error)
@@ -100,9 +94,7 @@ export const clearAllLocalSettings = () => {
 
 export const insertTestStudents = () => {
 	try {
-		const countResult = db.getFirstSync<{ count: number }>(
-			`SELECT COUNT(*) as count FROM local_students;`
-		)
+		const countResult = db.getFirstSync<{ count: number }>(`SELECT COUNT(*) as count FROM local_students;`)
 
 		if (countResult && countResult.count > 0) {
 			console.log('Тестовые студенты уже созданы, повторная генерация не требуется.')
@@ -140,21 +132,23 @@ export const insertTestStudents = () => {
 		// 1. Вставляем студентов группы М-11 (с разделением на подгруппы)
 		groupMK11.forEach((name, index) => {
 			// Первые 5 человек в 1-ю подгруппу, остальные во 2-ю
-			const subgroup = index < 5 ? 1 : 2 
-			db.runSync(
-				`INSERT INTO local_students (full_name, group_id, subgroup) VALUES (?, ?, ?);`,
-				[name, 'МК-11', subgroup]
-			)
+			const subgroup = index < 5 ? 1 : 2
+			db.runSync(`INSERT INTO local_students (full_name, group_id, subgroup) VALUES (?, ?, ?);`, [
+				name,
+				'МК-11',
+				subgroup
+			])
 		})
 
 		// 2. Вставляем студентов группы Э-11 (с разделением на подгруппы)
 		groupET11.forEach((name, index) => {
 			// Первые 5 человек в 1-ю подгруппу, остальные во 2-ю
 			const subgroup = index < 5 ? 1 : 2
-			db.runSync(
-				`INSERT INTO local_students (full_name, group_id, subgroup) VALUES (?, ?, ?);`,
-				[name, 'ЭТ-11', subgroup]
-			)
+			db.runSync(`INSERT INTO local_students (full_name, group_id, subgroup) VALUES (?, ?, ?);`, [
+				name,
+				'ЭТ-11',
+				subgroup
+			])
 		})
 
 		console.log('20 тестовых студентов успешно добавлены в SQLite с разделением на подгруппы!')
@@ -168,8 +162,8 @@ export const insertBulkStudents = (bulkText: string, groupId: string, subgroup: 
 	try {
 		// Разделяем большой текст на отдельные строчки
 		const names = bulkText
-			.split('\n')                  // Режем по переносу строки
-			.map(name => name.trim())     // Убираем лишние пробелы по краям
+			.split('\n') // Режем по переносу строки
+			.map(name => name.trim()) // Убираем лишние пробелы по краям
 			.filter(name => name.length > 2) // Игнорируем пустые строки
 
 		if (names.length === 0) return false
@@ -177,10 +171,11 @@ export const insertBulkStudents = (bulkText: string, groupId: string, subgroup: 
 		// Записываем всех студентов в SQLite одним пакетным запросом (транзакцией)
 		db.withTransactionSync(() => {
 			names.forEach(name => {
-				db.runSync(
-					`INSERT INTO local_students (full_name, group_id, subgroup) VALUES (?, ?, ?);`,
-					[name, groupId, subgroup]
-				)
+				db.runSync(`INSERT INTO local_students (full_name, group_id, subgroup) VALUES (?, ?, ?);`, [
+					name,
+					groupId,
+					subgroup
+				])
 			})
 		})
 
@@ -199,4 +194,3 @@ text
 Сидоров Алексей Николаевич
 Используйте код с осторожностью.
 Приложение берет этот текст, разделяет его по строкам и автоматически добавляет каждого студента в локальную базу данных Expo SQLite*/
-

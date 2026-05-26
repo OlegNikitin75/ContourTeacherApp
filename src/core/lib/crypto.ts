@@ -1,5 +1,8 @@
 import CryptoJS from 'crypto-js'
-import { getLocalSetting } from '@/core/lib/db' // Импортируем нашу функцию из SQLite
+
+import { getLocalSetting } from '@/core/lib/db'
+
+// Импортируем нашу функцию из SQLite
 
 // Получаем секретный ключ напрямую из SQLite (синхронно)
 const getSecretKey = (): string => {

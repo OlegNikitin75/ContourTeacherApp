@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+
 import { router } from 'expo-router'
+
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { StyleSheet, View } from 'react-native'
 
 import { departments, positions } from '@/core/constants/data'
 import { spacing } from '@/core/constants/theme'
@@ -23,21 +25,17 @@ export default function ProfileFillScreen() {
 
 	const isInteractionDisabled = loading || statusMessage?.type === 'success'
 
-const handleFieldChange = <T extends string | null>(
-	field: string, 
-	setter: (v: T) => void, 
-	value: T
-) => {
-	setter(value)
-	if (statusMessage) setStatusMessage(null)
-	if (errors[field]) {
-		setErrors(prev => {
-			const next = { ...prev }
-			delete next[field]
-			return next
-		})
+	const handleFieldChange = <T extends string | null>(field: string, setter: (v: T) => void, value: T) => {
+		setter(value)
+		if (statusMessage) setStatusMessage(null)
+		if (errors[field]) {
+			setErrors(prev => {
+				const next = { ...prev }
+				delete next[field]
+				return next
+			})
+		}
 	}
-}
 
 	const validate = () => {
 		const newErrors: Record<string, string> = {}
@@ -100,29 +98,26 @@ const handleFieldChange = <T extends string | null>(
 			isLoading={loading}
 			disabled={isInteractionDisabled}
 		>
-			<View 
-				style={styles.container} 
-				pointerEvents={isInteractionDisabled ? 'none' : 'auto'}
-			>
+			<View style={styles.container} pointerEvents={isInteractionDisabled ? 'none' : 'auto'}>
 				<AppInput
 					label='ваша фамилия'
 					placeholder='круглов'
 					value={lastName}
-					onChangeText={(v) => handleFieldChange('lastName', setLastName, v)}
+					onChangeText={v => handleFieldChange('lastName', setLastName, v)}
 					error={errors.lastName}
 				/>
 				<AppInput
 					label='ваше имя'
 					placeholder='контур'
 					value={firstName}
-					onChangeText={(v) => handleFieldChange('firstName', setFirstName, v)}
+					onChangeText={v => handleFieldChange('firstName', setFirstName, v)}
 					error={errors.firstName}
 				/>
 				<AppInput
 					label='ваше отчество'
 					placeholder='чертежевич'
 					value={middleName}
-					onChangeText={(v) => handleFieldChange('middleName', setMiddleName, v)}
+					onChangeText={v => handleFieldChange('middleName', setMiddleName, v)}
 					error={errors.middleName}
 				/>
 
@@ -131,7 +126,7 @@ const handleFieldChange = <T extends string | null>(
 					placeholder='Выберите из списка'
 					data={positions}
 					value={position}
-					onChange={(v) => handleFieldChange('position', setPosition, v)}
+					onChange={v => handleFieldChange('position', setPosition, v)}
 					error={errors.position}
 				/>
 
@@ -140,14 +135,11 @@ const handleFieldChange = <T extends string | null>(
 					placeholder='Выберите из списка'
 					data={departments}
 					value={department}
-					onChange={(v) => handleFieldChange('department', setDepartment, v)}
+					onChange={v => handleFieldChange('department', setDepartment, v)}
 					error={errors.department}
 				/>
 
-				<AppStatusMessage
-					message={statusMessage?.text}
-					type={statusMessage?.type}
-				/>
+				<AppStatusMessage message={statusMessage?.text} type={statusMessage?.type} />
 			</View>
 		</AppScreenOnboardingLayout>
 	)
@@ -155,7 +147,7 @@ const handleFieldChange = <T extends string | null>(
 
 const styles = StyleSheet.create({
 	container: {
-		rowGap: spacing(4), 
-		paddingVertical: spacing(2),
+		rowGap: spacing(4),
+		paddingVertical: spacing(2)
 	}
 })

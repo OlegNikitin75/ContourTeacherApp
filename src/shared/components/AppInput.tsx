@@ -1,6 +1,9 @@
-import { colors, spacing, corner, typography } from '@/core/constants/theme'
 import React, { useState } from 'react'
-import { View, Text, TextInput, TextInputProps, TouchableOpacity, StyleSheet } from 'react-native'
+
+import { StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native'
+
+import { colors, corner, spacing, typography } from '@/core/constants/theme'
+
 import { BaseIcon, IconContent } from './BaseIcon'
 
 interface AppInputProps extends TextInputProps {
@@ -47,12 +50,12 @@ export const AppInput = ({ label, error, icon: Icon, onIconPress, ...props }: Ap
 
 const styles = StyleSheet.create({
 	container: {
-		width: '100%',
+		width: '100%'
 	},
 	label: {
 		...typography.h4,
 		color: colors.appBlack,
-		marginBottom: spacing(2),
+		marginBottom: spacing(2)
 	},
 	inputWrapper: {
 		backgroundColor: colors.appLightGray,
@@ -62,32 +65,32 @@ const styles = StyleSheet.create({
 		height: spacing(11),
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'space-between',
+		justifyContent: 'space-between'
 	},
 	borderDefault: {
-		borderColor: 'transparent',
+		borderColor: 'transparent'
 	},
 	borderFocused: {
-		borderColor: colors.appBlack,
+		borderColor: colors.appBlack
 	},
 	borderError: {
-		borderColor: colors.appError,
+		borderColor: colors.appError
 	},
 	input: {
 		...typography.l1,
 		color: colors.appBlack,
 		flex: 1,
 		height: '100%',
-		padding: 0,
+		padding: 0
 	},
 	iconButton: {
 		marginLeft: spacing(2),
-		padding: spacing(1),
+		padding: spacing(1)
 	},
 	errorText: {
 		...typography.l3,
 		color: colors.appError,
 		marginTop: spacing(1),
-		marginLeft: spacing(1),
-	},
+		marginLeft: spacing(1)
+	}
 })

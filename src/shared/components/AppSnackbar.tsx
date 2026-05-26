@@ -1,7 +1,9 @@
 // @/shared/components/AppSnackbar.tsx
-import { colors, spacing, corner, typography } from '@/core/constants/theme'
 import React, { useEffect, useRef, useState } from 'react'
-import { Animated, Text, TouchableOpacity, StyleSheet } from 'react-native'
+
+import { Animated, StyleSheet, Text, TouchableOpacity } from 'react-native'
+
+import { colors, corner, spacing, typography } from '@/core/constants/theme'
 
 interface AppSnackbarProps {
 	visible: boolean
@@ -21,7 +23,7 @@ export default function AppSnackbar({
 	onDismiss
 }: AppSnackbarProps) {
 	const fadeAnim = useRef(new Animated.Value(0)).current
-	
+
 	// Локальный стейт для секунд. Переводим миллисекунды в секунды (4000 -> 4)
 	const [localCountdown, setLocalCountdown] = useState(Math.ceil(duration / 1000))
 	const intervalTimer = useRef<NodeJS.Timeout | null>(null)
@@ -73,14 +75,10 @@ export default function AppSnackbar({
 
 	return (
 		<Animated.View style={[styles.snackbar, { opacity: fadeAnim }]}>
-			<Text style={styles.messageText}>
-				{formattedMessage}
-			</Text>
+			<Text style={styles.messageText}>{formattedMessage}</Text>
 			{onActionPress && (
 				<TouchableOpacity onPress={onActionPress} activeOpacity={0.7}>
-					<Text style={styles.actionText}>
-						{actionLabel}
-					</Text>
+					<Text style={styles.actionText}>{actionLabel}</Text>
 				</TouchableOpacity>
 			)}
 		</Animated.View>
@@ -104,18 +102,18 @@ const styles = StyleSheet.create({
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.3,
 		shadowRadius: 4.65,
-		elevation: 8,
+		elevation: 8
 	},
 	messageText: {
 		...typography.t2,
 		color: colors.appWhite,
 		flex: 1,
-		marginRight: spacing(2),
+		marginRight: spacing(2)
 	},
 	actionText: {
 		...typography.l2,
 		color: colors.appError,
 		letterSpacing: 14 * 0.05,
-		textTransform: 'uppercase',
-	},
+		textTransform: 'uppercase'
+	}
 })

@@ -1,13 +1,16 @@
+import { useState } from 'react'
+
+import { router } from 'expo-router'
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { StyleSheet, View } from 'react-native'
+
+import { spacing } from '@/core/constants/theme'
+import { ROUTES } from '@/core/lib/routes'
+import { supabase } from '@/core/lib/supabase'
 import { AppInput } from '@/shared/components/AppInput'
 import AppScreenOnboardingLayout from '@/shared/components/AppScreenOnboardingLayout'
 import { AppStatusMessage } from '@/shared/components/AppStatusMessage'
-import { router } from 'expo-router'
-import { useState } from 'react'
-import { View,StyleSheet } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { supabase } from '@/core/lib/supabase'
-import { ROUTES } from '@/core/lib/routes'
-import { spacing } from '@/core/constants/theme'
 
 export default function AccessCodeScreen() {
 	const [accessCode, setAccessCode] = useState('')
@@ -24,7 +27,7 @@ export default function AccessCodeScreen() {
 	const handleVerifyCode = async () => {
 		// Очищаем пробелы и переводим в нижний регистр для точного совпадения
 		const trimmedCode = accessCode.trim().toLowerCase()
-		
+
 		if (!trimmedCode) {
 			setError('введите ключ доступа')
 			return
@@ -62,11 +65,10 @@ export default function AccessCodeScreen() {
 			setTimeout(() => {
 				router.replace(`/(onboarding)/${ROUTES.PROFILE_FILL}`)
 			}, 1500)
-
 		} catch (err: any) {
-			setStatusMessage({ 
-				text: err.message || 'ошибка проверки ключа', 
-				type: 'error' 
+			setStatusMessage({
+				text: err.message || 'ошибка проверки ключа',
+				type: 'error'
 			})
 		} finally {
 			setLoading(false)
@@ -93,16 +95,14 @@ export default function AccessCodeScreen() {
 					autoCorrect={false}
 				/>
 
-				<AppStatusMessage
-					message={statusMessage?.text}
-					type={statusMessage?.type}
-				/>
+				<AppStatusMessage message={statusMessage?.text} type={statusMessage?.type} />
 			</View>
 		</AppScreenOnboardingLayout>
 	)
 }
 const styles = StyleSheet.create({
-			container: {
-		rowGap: spacing(4), 
-		paddingVertical: spacing(2),
-	}})
+	container: {
+		rowGap: spacing(4),
+		paddingVertical: spacing(2)
+	}
+})

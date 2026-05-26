@@ -1,6 +1,8 @@
-import { colors, spacing, typography } from '@/core/constants/theme'
 import React from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+
+import { StyleSheet, Text, View } from 'react-native'
+
+import { colors, spacing, typography } from '@/core/constants/theme'
 
 interface HeaderTitleProps {
 	firstItemTitle: string
@@ -23,14 +25,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		gap: spacing(1),
-		paddingVertical: spacing(4),
+		paddingVertical: spacing(4)
 	},
 	textBlack: {
 		...typography.h3,
-		color: colors.appBlack,
+		color: colors.appBlack
 	},
 	textAccent: {
 		...typography.h3,
-		color: colors.appAccent, 
-	},
+		color: colors.appAccent
+	}
 })

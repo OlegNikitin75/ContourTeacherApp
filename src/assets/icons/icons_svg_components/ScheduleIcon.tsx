@@ -1,6 +1,8 @@
-import { IconContent } from '@/shared/components/BaseIcon'
 import { Path } from 'react-native-svg'
-export const ScheduleIcon:IconContent = () => (
+
+import { IconContent } from '@/shared/components/BaseIcon'
+
+export const ScheduleIcon: IconContent = () => (
 	<>
 		<Path d='M13.334 1.668v3.333M6.667 1.668v3.333M2.5 7.499h15' />
 		<Path

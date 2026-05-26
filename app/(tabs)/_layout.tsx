@@ -1,11 +1,13 @@
-import { colors, spacing, corner, typography } from '@/core/constants/theme'
-import { Tabs, usePathname, useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
-import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native'
+
+import { Tabs, usePathname, useRouter } from 'expo-router'
+
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { HomeIcon, CoursesIcon, ScheduleIcon, SearchIcon } from '@/assets/icons/icons_svg_components'
+import { CoursesIcon, HomeIcon, ScheduleIcon, SearchIcon } from '@/assets/icons/icons_svg_components'
+import { colors, corner, spacing, typography } from '@/core/constants/theme'
 import { BaseIcon } from '@/shared/components/BaseIcon'
 
 const { width } = Dimensions.get('window')
@@ -35,23 +37,13 @@ export default function TabLayout() {
 			<View style={[styles.tabBarContainer, { bottom: bottomPadding }]}>
 				{TABS.map(tab => {
 					const isFocused = cleanPath === tab.name || (tab.name === 'index' && cleanPath === '')
-					return (
-						<TabButton 
-							key={tab.name} 
-							tab={tab} 
-							isFocused={isFocused} 
-						/>
-					)
+					return <TabButton key={tab.name} tab={tab} isFocused={isFocused} />
 				})}
 			</View>
 
 			{/* ОТДЕЛЬНАЯ КНОПКА ПОИСКА */}
 			<View style={[styles.searchButtonContainer, { bottom: bottomPadding }]}>
-				<TouchableOpacity
-					activeOpacity={0.8}
-					style={styles.searchButton}
-					onPress={() => console.log('Search')}
-				>
+				<TouchableOpacity activeOpacity={0.8} style={styles.searchButton} onPress={() => console.log('Search')}>
 					<BaseIcon icon={SearchIcon} color={colors.appWhite} size={26} />
 				</TouchableOpacity>
 			</View>
@@ -61,7 +53,7 @@ export default function TabLayout() {
 
 // ВЫДЕЛЕННЫЙ НАДЁЖНЫЙ КОМПОНЕНТ КНОПКИ ТАБА БЕЗ MOTI
 interface TabButtonProps {
-	tab: typeof TABS[0]
+	tab: (typeof TABS)[0]
 	isFocused: boolean
 }
 
@@ -92,14 +84,11 @@ function TabButton({ tab, isFocused }: TabButtonProps) {
 				router.push(target as any)
 			}}
 			activeOpacity={0.7}
-			style={styles.tabItem} 
+			style={styles.tabItem}
 		>
 			<Animated.View style={[styles.reanimatedPill, animatedPillStyle]}>
-				<BaseIcon 
-					icon={tab.icon} 
-					color={isFocused ? colors.appBlack : colors.appGray}
-				/>
-				
+				<BaseIcon icon={tab.icon} color={isFocused ? colors.appBlack : colors.appGray} />
+
 				<Animated.View style={[styles.textWrapper, animatedTextStyle]}>
 					<Text numberOfLines={1} style={styles.tabLabel}>
 						{tab.label}
@@ -113,7 +102,7 @@ function TabButton({ tab, isFocused }: TabButtonProps) {
 const styles = StyleSheet.create({
 	screenContainer: {
 		flex: 1,
-		backgroundColor: colors.appLightGray,
+		backgroundColor: colors.appLightGray
 	},
 	tabBarContainer: {
 		position: 'absolute',
@@ -125,31 +114,31 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		paddingHorizontal: spacing(1),
+		paddingHorizontal: spacing(1)
 	},
 	tabItem: {
-		marginHorizontal: spacing(0.5),
+		marginHorizontal: spacing(0.5)
 	},
 	reanimatedPill: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
 		height: 44,
-		borderRadius: corner('full'),
+		borderRadius: corner('full')
 	},
 	textWrapper: {
 		overflow: 'hidden',
 		flexDirection: 'row',
-		alignItems: 'center',
+		alignItems: 'center'
 	},
 	tabLabel: {
 		...typography.l3,
 		color: colors.appBlack,
-		paddingBottom: spacing(0.5),
+		paddingBottom: spacing(0.5)
 	},
 	searchButtonContainer: {
 		position: 'absolute',
-		right: spacing(4),
+		right: spacing(4)
 	},
 	searchButton: {
 		width: 54,
@@ -157,6 +146,6 @@ const styles = StyleSheet.create({
 		borderRadius: corner('full'),
 		backgroundColor: colors.appBlack,
 		alignItems: 'center',
-		justifyContent: 'center',
-	},
+		justifyContent: 'center'
+	}
 })

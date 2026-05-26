@@ -8,7 +8,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+     "format": "prettier --write \"{app,src}/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@expo-google-fonts/jetbrains-mono": "^0.4.1",
@@ -57,6 +58,7 @@
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/crypto-js": "^4.2.2",
     "@types/react": "~19.1.10",
+    "prettier": "^3.8.3",
     "typescript": "~5.9.2"
   },
   "overrides": {

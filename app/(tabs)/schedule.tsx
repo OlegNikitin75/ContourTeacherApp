@@ -1,6 +1,8 @@
-import { colors, typography } from '@/core/constants/theme'
 import React from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+
+import { StyleSheet, Text, View } from 'react-native'
+
+import { colors, typography } from '@/core/constants/theme'
 
 export default function Schedule() {
 	return (
@@ -15,10 +17,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: colors.appLightGray,
+		backgroundColor: colors.appLightGray
 	},
 	title: {
 		...typography.h2,
-		color: colors.appAccent,
-	},
+		color: colors.appAccent
+	}
 })

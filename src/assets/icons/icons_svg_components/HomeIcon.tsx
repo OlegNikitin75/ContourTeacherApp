@@ -1,5 +1,7 @@
-import { IconContent } from '@/shared/components/BaseIcon'
 import { Path } from 'react-native-svg'
+
+import { IconContent } from '@/shared/components/BaseIcon'
+
 export const HomeIcon: IconContent = () => (
 	<>
 		<Path d='M3.333 7.168v10.333h13.333V7.168' />

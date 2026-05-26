@@ -1,5 +1,7 @@
-import { IconContent } from '@/shared/components/BaseIcon'
 import { Path } from 'react-native-svg'
+
+import { IconContent } from '@/shared/components/BaseIcon'
+
 export const EyeHiddenIcon: IconContent = () => (
 	<>
 		<Path d='M12.0001 19.0014C11.1581 19.0014 10.3151 18.8234 9.49609 18.5064' />

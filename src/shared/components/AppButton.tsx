@@ -1,7 +1,10 @@
-import { colors, spacing, corner, typography } from '@/core/constants/theme'
-import { Href, useRouter } from 'expo-router'
 import React from 'react'
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, ViewStyle } from 'react-native'
+
+import { Href, useRouter } from 'expo-router'
+
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native'
+
+import { colors, corner, spacing, typography } from '@/core/constants/theme'
 
 interface AppButtonProps {
 	title: string
@@ -9,7 +12,7 @@ interface AppButtonProps {
 	href?: Href
 	isLoading?: boolean
 	isDisabled?: boolean
-	style?: ViewStyle | ViewStyle[] 
+	style?: ViewStyle | ViewStyle[]
 }
 
 export default function AppButton({
@@ -39,18 +42,9 @@ export default function AppButton({
 			onPress={handlePress}
 			activeOpacity={0.7}
 			disabled={isButtonDisabled}
-			style={[
-				styles.button,
-				isLoading && styles.loadingState,
-				isDisabled && styles.disabledState,
-				style
-			]}
+			style={[styles.button, isLoading && styles.loadingState, isDisabled && styles.disabledState, style]}
 		>
-			{isLoading ? (
-				<ActivityIndicator color={colors.appLightGray} />
-			) : (
-				<Text style={styles.text}>{title}</Text>
-			)}
+			{isLoading ? <ActivityIndicator color={colors.appLightGray} /> : <Text style={styles.text}>{title}</Text>}
 		</TouchableOpacity>
 	)
 }
@@ -59,19 +53,19 @@ const styles = StyleSheet.create({
 	button: {
 		width: '100%',
 		backgroundColor: colors.appBlack,
-		height: spacing(14), 
+		height: spacing(14),
 		borderRadius: corner('full'),
 		alignItems: 'center',
-		justifyContent: 'center',
+		justifyContent: 'center'
 	},
 	loadingState: {
-		opacity: 0.6,
+		opacity: 0.6
 	},
 	disabledState: {
-		opacity: 0.4, 
+		opacity: 0.4
 	},
 	text: {
 		...typography.l1,
-		color: colors.appWhite,
-	},
+		color: colors.appWhite
+	}
 })

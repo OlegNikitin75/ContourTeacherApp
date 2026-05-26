@@ -1,4 +1,5 @@
 import { Redirect } from 'expo-router'
+
 import { getLocalSetting, initLocalDatabase } from '@/core/lib/db'
 
 export default function RootIndex() {
@@ -10,8 +11,8 @@ export default function RootIndex() {
 
 	// 3. Выполняем точный редирект на уровне рендера
 	if (savedRole) {
-		return <Redirect href="/(tabs)" />
+		return <Redirect href='/(tabs)' />
 	}
 
-	return <Redirect href="/(onboarding)" />
+	return <Redirect href='/(onboarding)' />
 }
