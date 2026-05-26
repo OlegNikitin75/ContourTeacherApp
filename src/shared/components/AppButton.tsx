@@ -1,15 +1,15 @@
-import { colors } from '@/core/constants/theme'
+import { colors, spacing, corner, typography } from '@/core/constants/theme'
 import { Href, useRouter } from 'expo-router'
 import React from 'react'
-import { TouchableOpacity, Text, ActivityIndicator } from 'react-native'
+import { TouchableOpacity, Text, ActivityIndicator, StyleSheet, ViewStyle } from 'react-native'
 
 interface AppButtonProps {
 	title: string
 	onPress?: () => void
 	href?: Href
 	isLoading?: boolean
-	className?: string
 	isDisabled?: boolean
+	style?: ViewStyle | ViewStyle[] 
 }
 
 export default function AppButton({
@@ -17,13 +17,13 @@ export default function AppButton({
 	onPress,
 	href,
 	isLoading = false,
-	isDisabled,
-	className = ''
+	isDisabled = false,
+	style
 }: AppButtonProps) {
 	const router = useRouter()
 
 	const handlePress = () => {
-		if (isLoading) return
+		if (isLoading || isDisabled) return
 
 		if (href) {
 			router.push(href)
@@ -31,17 +31,47 @@ export default function AppButton({
 			onPress()
 		}
 	}
+
+	const isButtonDisabled = isLoading || isDisabled
+
 	return (
 		<TouchableOpacity
 			onPress={handlePress}
-			disabled={isLoading && isDisabled}
-			className={`w-full bg-app-black h-16 rounded-4xl items-center justify-center active:opacity-70 ${isLoading ? 'opacity-60' : ''} ${className}`}
+			activeOpacity={0.7}
+			disabled={isButtonDisabled}
+			style={[
+				styles.button,
+				isLoading && styles.loadingState,
+				isDisabled && styles.disabledState,
+				style
+			]}
 		>
 			{isLoading ? (
 				<ActivityIndicator color={colors.appLightGray} />
 			) : (
-				<Text className='text-app-white text-l1'>{title}</Text>
+				<Text style={styles.text}>{title}</Text>
 			)}
 		</TouchableOpacity>
 	)
 }
+
+const styles = StyleSheet.create({
+	button: {
+		width: '100%',
+		backgroundColor: colors.appBlack,
+		height: spacing(14), 
+		borderRadius: corner('full'),
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	loadingState: {
+		opacity: 0.6,
+	},
+	disabledState: {
+		opacity: 0.4, 
+	},
+	text: {
+		...typography.l1,
+		color: colors.appWhite,
+	},
+})
