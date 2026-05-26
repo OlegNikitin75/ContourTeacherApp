@@ -3,10 +3,11 @@ import AppScreenOnboardingLayout from '@/shared/components/AppScreenOnboardingLa
 import { AppStatusMessage } from '@/shared/components/AppStatusMessage'
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { View } from 'react-native'
+import { View,StyleSheet } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { supabase } from '@/core/lib/supabase'
 import { ROUTES } from '@/core/lib/routes'
+import { spacing } from '@/core/constants/theme'
 
 export default function AccessCodeScreen() {
 	const [accessCode, setAccessCode] = useState('')
@@ -80,7 +81,7 @@ export default function AccessCodeScreen() {
 			isLoading={loading}
 			disabled={loading || statusMessage?.type === 'success'}
 		>
-			<View className='gap-y-4'>
+			<View style={styles.container}>
 				<AppInput
 					label='ваш секретный ключ'
 					placeholder='например: admin_key_777'
@@ -100,3 +101,7 @@ export default function AccessCodeScreen() {
 		</AppScreenOnboardingLayout>
 	)
 }
+const styles = StyleSheet.create({
+	container: {
+		columnGap: spacing(1),
+	}})
