@@ -7,7 +7,6 @@ import React, { useState } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { AlertProvider } from '@/providers/AlertContext'
 import AnimatedSplashScreen from '@/shared/components/AnimatedSplashScreen' 
 
 SplashScreen.preventAutoHideAsync()
@@ -27,7 +26,6 @@ export default function RootLayout() {
 		<GestureHandlerRootView style={{ flex: 1, backgroundColor: '#F8FAFC' }}>
 			<SafeAreaProvider>
 				<QueryClientProvider client={queryClient}>
-					<AlertProvider>
 						<StatusBar style='dark' translucent={true} backgroundColor='transparent' />
 						
 						{!showContent ? (
@@ -47,7 +45,6 @@ export default function RootLayout() {
 								<Stack.Screen name='(profile)' options={{ presentation: 'modal' }} />
 							</Stack>
 						)}
-					</AlertProvider>
 				</QueryClientProvider>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>

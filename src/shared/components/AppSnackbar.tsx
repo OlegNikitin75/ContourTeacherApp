@@ -1,5 +1,6 @@
+import { colors, spacing, corner, typography } from '@/core/constants/theme'
 import React, { useEffect, useRef } from 'react'
-import { Animated, Text, TouchableOpacity, View } from 'react-native'
+import { Animated, Text, TouchableOpacity, StyleSheet } from 'react-native'
 
 interface AppSnackbarProps {
 	visible: boolean
@@ -13,7 +14,7 @@ interface AppSnackbarProps {
 export default function AppSnackbar({
 	visible,
 	message,
-	actionLabel = 'ОТМЕНА',
+	actionLabel = 'отмена',
 	onActionPress,
 	duration = 4000,
 	onDismiss
@@ -52,15 +53,14 @@ export default function AppSnackbar({
 
 	return (
 		<Animated.View
-			style={{ opacity: fadeAnim }}
-			className='absolute bottom-6 left-4 right-4 bg-zinc-900 rounded-lg p-4 flex-row items-center justify-between shadow-lg z-50'
+			style={[styles.snackbar, { opacity: fadeAnim }]}
 		>
-			<Text className='text-white font-medium text-sm flex-1 mr-2'>
+			<Text style={styles.messageText}>
 				{message}
 			</Text>
 			{onActionPress && (
-				<TouchableOpacity onPress={onActionPress}>
-					<Text className='text-red-400 font-bold text-sm tracking-wider uppercase'>
+				<TouchableOpacity onPress={onActionPress} activeOpacity={0.7}>
+					<Text style={styles.actionText}>
 						{actionLabel}
 					</Text>
 				</TouchableOpacity>
@@ -68,3 +68,39 @@ export default function AppSnackbar({
 		</Animated.View>
 	)
 }
+
+const styles = StyleSheet.create({
+	snackbar: {
+		position: 'absolute',
+		bottom: spacing(6),
+		left: spacing(4), 
+		right: spacing(4), 
+		backgroundColor: colors.appDarkGray,
+		borderRadius: corner(2), 
+		padding: spacing(4), 
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		zIndex: 50, 
+		
+		// Нативная тень для iOS (shadow-lg)
+		shadowColor: colors.appBlack,
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.3,
+		shadowRadius: 4.65,
+		// Тень для Android
+		elevation: 8,
+	},
+	messageText: {
+		...typography.t2, 
+		color: colors.appWhite, 
+		flex: 1,
+		marginRight: spacing(2),
+	},
+	actionText: {
+		...typography.l2, 
+		color: colors.appError, 
+		letterSpacing: 14 * 0.05,
+		textTransform: 'uppercase'
+	},
+})
