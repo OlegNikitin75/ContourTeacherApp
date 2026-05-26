@@ -1,12 +1,14 @@
+import { useState } from 'react'
+import { View, StyleSheet } from 'react-native'
+import { router } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import { departments, positions } from '@/core/constants/data'
+import { spacing } from '@/core/constants/theme'
 import AppDropdown from '@/shared/components/AppDropdown'
 import { AppInput } from '@/shared/components/AppInput'
 import AppScreenAuthLayout from '@/shared/components/AppScreenOnboardingLayout'
 import { AppStatusMessage } from '@/shared/components/AppStatusMessage'
-import { router } from 'expo-router'
-import { useState } from 'react'
-import { View } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage' // Импортируем AsyncStorage
 
 export default function ProfileFillScreen() {
 	const [firstName, setFirstName] = useState('')
@@ -16,41 +18,43 @@ export default function ProfileFillScreen() {
 	const [department, setDepartment] = useState<string | null>(null)
 
 	const [loading, setLoading] = useState(false)
-	const [errors, setErrors] = useState<{ [key: string]: string }>({})
+	const [errors, setErrors] = useState<Record<string, string>>({})
 	const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'error' | 'success' } | null>(null)
 
-	const isSuccess = statusMessage?.type === 'success'
+	const isInteractionDisabled = loading || statusMessage?.type === 'success'
 
-	const handleFieldChange = (field: string, setter: (v: any) => void, value: any) => {
-		setter(value)
-		if (statusMessage) setStatusMessage(null)
-		if (errors[field]) {
-			setErrors(prev => {
-				const newErrs = { ...prev }
-				delete newErrs[field]
-				return newErrs
-			})
-		}
+const handleFieldChange = <T extends string | null>(
+	field: string, 
+	setter: (v: T) => void, 
+	value: T
+) => {
+	setter(value)
+	if (statusMessage) setStatusMessage(null)
+	if (errors[field]) {
+		setErrors(prev => {
+			const next = { ...prev }
+			delete next[field]
+			return next
+		})
 	}
+}
 
 	const validate = () => {
-		const newErrors: { [key: string]: string } = {}
+		const newErrors: Record<string, string> = {}
 
-		const checkText = (value: string, field: string, label: string, required = true) => {
-			const val = value.trim()
-			if (required && !val) {
-				newErrors[field] = `Введите ${label}`
-			} else if (val && val.length < 2) {
-				newErrors[field] = 'Минимум 2 символа'
-			}
-		}
-
-		checkText(lastName, 'lastName', 'фамилию')
-		checkText(firstName, 'firstName', 'имя')
-		checkText(middleName, 'middleName', 'отчество', false)
-
+		// Упрощенная и понятная проверка полей
+		if (!lastName.trim()) newErrors.lastName = 'Введите фамилию'
+		if (!firstName.trim()) newErrors.firstName = 'Введите имя'
 		if (!position) newErrors.position = 'Выберите должность'
 		if (!department) newErrors.department = 'Выберите подразделение'
+
+		// Проверка на минимальную длину (если поле заполнено)
+		const checkLength = (val: string, field: string) => {
+			if (val.trim() && val.trim().length < 2) newErrors[field] = 'Минимум 2 символа'
+		}
+		checkLength(lastName, 'lastName')
+		checkLength(firstName, 'firstName')
+		checkLength(middleName, 'middleName')
 
 		setErrors(newErrors)
 		return Object.keys(newErrors).length === 0
@@ -63,31 +67,26 @@ export default function ProfileFillScreen() {
 			setLoading(true)
 			setStatusMessage(null)
 
-			// 1. Формируем локальный объект профиля преподавателя
 			const profileData = {
 				firstName: firstName.trim(),
 				lastName: lastName.trim(),
 				middleName: middleName.trim(),
-				position: position!,
-				department: department!,
+				position,
+				department,
 				isComplete: true
 			}
 
-			// 2. Сохраняем в AsyncStorage
-			await AsyncStorage.setItem('user_profile', JSON.stringify(profileData))
-			
-			// Также сохраняем статус, чтобы RootLayout понимал, что онбординг пройден
-			await AsyncStorage.setItem('user_role', 'teacher') // По умолчанию или из ключа доступа
+			// Сохраняем данные пачкой
+			await AsyncStorage.multiSet([
+				['user_profile', JSON.stringify(profileData)],
+				['user_role', 'teacher']
+			])
 
 			setLoading(false)
 			setStatusMessage({ text: 'профиль успешно заполнен!', type: 'success' })
 
-			// 3. Перенаправляем на вкладки
-			setTimeout(() => {
-				router.replace('/(tabs)')
-			}, 2000)
-
-		} catch (error: any) {
+			setTimeout(() => router.replace('/(tabs)'), 2000)
+		} catch {
 			setLoading(false)
 			setStatusMessage({ text: 'не удалось сохранить профиль локально', type: 'error' })
 		}
@@ -99,16 +98,18 @@ export default function ProfileFillScreen() {
 			titleBtn='завершить'
 			actionBtn={handleCompleteProfile}
 			isLoading={loading}
-			disabled={loading || isSuccess}
+			disabled={isInteractionDisabled}
 		>
-			<View className='gap-y-4'>
+			<View 
+				style={styles.container} 
+				pointerEvents={isInteractionDisabled ? 'none' : 'auto'}
+			>
 				<AppInput
 					label='ваша фамилия'
 					placeholder='круглов'
 					value={lastName}
 					onChangeText={(v) => handleFieldChange('lastName', setLastName, v)}
 					error={errors.lastName}
-					editable={!loading && !isSuccess}
 				/>
 				<AppInput
 					label='ваше имя'
@@ -116,7 +117,6 @@ export default function ProfileFillScreen() {
 					value={firstName}
 					onChangeText={(v) => handleFieldChange('firstName', setFirstName, v)}
 					error={errors.firstName}
-					editable={!loading && !isSuccess}
 				/>
 				<AppInput
 					label='ваше отчество'
@@ -124,7 +124,6 @@ export default function ProfileFillScreen() {
 					value={middleName}
 					onChangeText={(v) => handleFieldChange('middleName', setMiddleName, v)}
 					error={errors.middleName}
-					editable={!loading && !isSuccess}
 				/>
 
 				<AppDropdown
@@ -134,7 +133,6 @@ export default function ProfileFillScreen() {
 					value={position}
 					onChange={(v) => handleFieldChange('position', setPosition, v)}
 					error={errors.position}
-					disabled={loading || isSuccess}
 				/>
 
 				<AppDropdown
@@ -144,7 +142,6 @@ export default function ProfileFillScreen() {
 					value={department}
 					onChange={(v) => handleFieldChange('department', setDepartment, v)}
 					error={errors.department}
-					disabled={loading || isSuccess}
 				/>
 
 				<AppStatusMessage
@@ -155,3 +152,10 @@ export default function ProfileFillScreen() {
 		</AppScreenAuthLayout>
 	)
 }
+
+const styles = StyleSheet.create({
+	container: {
+		rowGap: spacing(4), 
+		paddingVertical: spacing(2),
+	}
+})

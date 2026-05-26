@@ -102,6 +102,7 @@ export default function AccessCodeScreen() {
 	)
 }
 const styles = StyleSheet.create({
-	container: {
-		columnGap: spacing(1),
+			container: {
+		rowGap: spacing(4), 
+		paddingVertical: spacing(2),
 	}})
