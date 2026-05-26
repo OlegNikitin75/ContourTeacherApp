@@ -46,15 +46,3 @@ export const theme = {
 
 
 
-
-// export const components = {
-// 	tabBar: {
-// 		height: spacing(4),
-// 		radius: corner(3),
-// 		horizontalInset: spacing(5),
-// 		iconFrame: spacing(3),
-// 		itemPaddingVertical: spacing(2)
-// 	}
-// } as const
-
-

@@ -37,13 +37,9 @@
     "expo-symbols": "~1.0.8",
     "expo-system-ui": "~6.0.9",
     "expo-web-browser": "~15.0.10",
-    "framer-motion": "^12.38.0",
-    "moti": "^0.30.0",
-    "nativewind": "^5.0.0-preview.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
-    "react-native-css": "^3.0.6",
     "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
@@ -58,13 +54,9 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.2.2",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/crypto-js": "^4.2.2",
     "@types/react": "~19.1.10",
-    "postcss": "^8.5.8",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "tailwindcss": "^4.2.2",
     "typescript": "~5.9.2"
   },
   "overrides": {
