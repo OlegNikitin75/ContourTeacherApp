@@ -1,7 +1,8 @@
+import { colors, spacing, corner, typography } from '@/core/constants/theme'
 import { Href, Link } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
-import { Image, ImageSourcePropType, Platform, Text, TouchableOpacity, View } from 'react-native'
+import { Image, ImageSourcePropType, Platform, Text, TouchableOpacity, View, StyleSheet } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import AppButton from './AppButton'
@@ -41,13 +42,13 @@ export default function AppScreenOnboardingLayout({
 	const insets = useSafeAreaInsets()
 
 	return (
-		<View className='flex-1 bg-app-light-gray'>
+		<View style={styles.container}>
 			<StatusBar style='dark' />
-			<SafeAreaView style={{ flex: 1 }} edges={['top']}>
+			<SafeAreaView style={styles.safeArea} edges={['top']}>
 				<HeaderTitle firstItemTitle='контур' secondItemTitle='графика' />
 
 				<KeyboardAwareScrollView
-					contentContainerStyle={{ flexGrow: 1 }}
+					contentContainerStyle={styles.scrollContent}
 					enableOnAndroid={true}
 					extraScrollHeight={Platform.OS === 'ios' ? 50 : 100}
 					keyboardShouldPersistTaps='handled'
@@ -55,41 +56,42 @@ export default function AppScreenOnboardingLayout({
 				>
 					{sourceImg ? (
 						<View 
-							className='items-center justify-center px-4'
-							style={{ 
-								flex: imageHeight ? 0 : 1, 
-								height: imageHeight || 'auto',
-								minHeight: imageHeight || 180 
-							}}
+							style={[
+								styles.imageWrapper,
+								{ 
+									flex: imageHeight ? 0 : 1, 
+									height: imageHeight || 'auto',
+									minHeight: imageHeight || 180 
+								}
+							]}
 						>
 							<Image
 								source={sourceImg}
-								style={{ 
-									width: '100%', 
-									height: '100%',
-									aspectRatio: imageHeight ? undefined : 1 
-								}}
+								style={styles.image}
 								resizeMode='contain'
 							/>
 						</View>
 					) : (
-						<View className='py-6' />
+						<View style={styles.emptyImageGap} />
 					)}
+					
 					<View
-						className='bg-app-white w-full px-4 pt-6 rounded-t-4xl'
-						style={{
-							marginTop: 'auto', 
-							paddingBottom: insets.bottom + 16 
-						}}
+						style={[
+							styles.contentCard,
+							{ paddingBottom: insets.bottom + spacing(4) } 
+						]}
 					>
-						<Text className='text-app-black text-h3 text-center mb-2'>{title}</Text>
+						<Text style={styles.titleText}>{title}</Text>
+						
 						{subtitle && (
-							<Text className='text-app-gray text-t2 text-center mb-4'>
+							<Text style={styles.subtitleText}>
 								{subtitle}
 							</Text>
 						)}
+						
 						<View>{children}</View>
-						<View className='mb-5'>
+						
+						<View style={styles.buttonContainer}>
 							{hrefBtn ? (
 								<Link href={hrefBtn} asChild>
 									<AppButton title={titleBtn} isLoading={isLoading} isDisabled={disabled} />
@@ -103,13 +105,14 @@ export default function AppScreenOnboardingLayout({
 								/>
 							)}
 						</View>
+						
 						{(bottomText || bottomLinkText) && (
-							<View className='flex-row gap-1 justify-center pb-2'>
-								<Text className='text-app-gray text-t2'>{bottomText}</Text>
+							<View style={styles.bottomFooter}>
+								<Text style={styles.bottomText}>{bottomText}</Text>
 								{hrefLink && bottomLinkText && (
 									<Link href={hrefLink} asChild>
 										<TouchableOpacity activeOpacity={0.7}>
-											<Text className='text-app-black text-l2 underline'>
+											<Text style={styles.bottomLink}>
 												{bottomLinkText}
 											</Text>
 										</TouchableOpacity>
@@ -120,16 +123,79 @@ export default function AppScreenOnboardingLayout({
 					</View>
 				</KeyboardAwareScrollView>
 			</SafeAreaView>
-			<View 
-				style={{ 
-					height: insets.bottom, 
-					backgroundColor: 'white', 
-					position: 'absolute', 
-					bottom: 0, 
-					left: 0, 
-					right: 0 ,
-				}} 
-			/>
+			
+			<View style={[styles.bottomStub, { height: insets.bottom }]} />
 		</View>
 	)
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: colors.appLightGray,
+	},
+	safeArea: {
+		flex: 1,
+	},
+	scrollContent: {
+		flexGrow: 1,
+	},
+	imageWrapper: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingHorizontal: spacing(4),
+	},
+	image: {
+		width: '100%',
+		height: '100%',
+	},
+	emptyImageGap: {
+		paddingVertical: spacing(6),
+	},
+	contentCard: {
+		backgroundColor: colors.appWhite,
+		width: '100%',
+		paddingHorizontal: spacing(4), 
+		paddingTop: spacing(6),
+		borderTopLeftRadius: corner(6), 
+		borderTopRightRadius: corner(6),
+		marginTop: 'auto',
+	},
+	titleText: {
+		...typography.h3,
+		color: colors.appBlack,
+		textAlign: 'center',
+		marginBottom: spacing(2), 
+	},
+	subtitleText: {
+		...typography.t2,
+		color: colors.appGray,
+		textAlign: 'center',
+		marginBottom: spacing(4), 
+	},
+	buttonContainer: {
+		marginBottom: spacing(5), 
+	},
+	bottomFooter: {
+		flexDirection: 'row',
+		gap: spacing(1), 
+		justifyContent: 'center',
+		paddingBottom: spacing(2),
+	},
+	bottomText: {
+		...typography.t2,
+		color: colors.appGray,
+	},
+	bottomLink: {
+		...typography.l2,
+		color: colors.appBlack,
+		textDecorationLine: 'underline', 
+	},
+	bottomStub: {
+		backgroundColor: colors.appWhite,
+		position: 'absolute',
+		bottom: 0,
+		left: 0,
+		right: 0,
+	},
+})
