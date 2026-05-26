@@ -86,7 +86,7 @@ export default function AccessCodeScreen() {
 			<View style={styles.container}>
 				<AppInput
 					label='ваш секретный ключ'
-					placeholder='например: admin_key_777'
+					placeholder='••••••••••••'
 					value={accessCode}
 					onChangeText={handleCodeChange}
 					error={error || undefined}

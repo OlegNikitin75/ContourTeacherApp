@@ -1,18 +1,35 @@
 import { Link } from 'expo-router'
+import React from 'react'
+import { Text, View, StyleSheet } from 'react-native'
 
-import { Text, View } from 'react-native'
-
+import { colors, spacing, typography } from '@/core/constants/theme'
 import { ROUTES } from '@/core/lib/routes'
-import '@/core/styles/global.css'
 import AppButton from '@/shared/components/AppButton'
 
 export default function App() {
 	return (
-		<View className='flex-1 items-center justify-center bg-app-light-gray'>
+		<View style={styles.container}>
 			<Link href={ROUTES.PROFILE} asChild>
-				<AppButton title={'профиль'} />
+				<AppButton title={'профиль'} style={styles.button} />
 			</Link>
-			<Text className='text-xl font-bold text-blue-500'>Welcome to Nativewind!</Text>
+			<Text style={styles.title}>welcome to contour!</Text>
 		</View>
 	)
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: colors.appLightGray,
+		paddingHorizontal: spacing(4),
+	},
+	button: {
+		marginBottom: spacing(4)
+	},
+	title: {
+		...typography.h2,
+		color: colors.appAccent,
+	},
+})

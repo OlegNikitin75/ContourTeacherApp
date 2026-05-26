@@ -42,7 +42,6 @@ export default function AppDropdown({
 				containerStyle={styles.popupContainer}
 				itemTextStyle={styles.itemTextStyle}
 				activeColor={colors.appLightGray}
-				выборе
 				data={data}
 				labelField='label'
 				valueField='value'
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
 		marginBottom: spacing(2)
 	},
 	dropdown: {
-		height: spacing(11),
+		height: spacing(13),
 		borderColor: 'transparent',
 		borderWidth: 2,
 		borderRadius: corner(2),

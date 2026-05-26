@@ -24,7 +24,7 @@ const baseText = {
 export const typography = {
 	h1: { ...baseText, fontSize: 30, lineHeight: 38, letterSpacing: 30 * -0.04 },
 	h2: { ...baseText, fontSize: 28, lineHeight: 36, letterSpacing: 28 * -0.04 },
-	h3: { ...baseText, fontSize: 24, lineHeight: 20, letterSpacing: 24 * -0.04 },
+	h3: { ...baseText, fontSize: 24, lineHeight: 32, letterSpacing: 24 * -0.04 },
 	h4: { ...baseText, fontSize: 16, lineHeight: 20, letterSpacing: 16 * -0.04 },
 
 	// Для обычного текста меняем шрифт на Regular

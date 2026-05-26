@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
 		...typography.h3,
 		color: colors.appBlack,
 		textAlign: 'center',
-		marginBottom: spacing(2)
+		marginBottom: spacing(5)
 	},
 	subtitleText: {
 		...typography.t2,
