@@ -8,7 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { AlertProvider } from '@/providers/AlertContext'
-import AnimatedSplashScreen from '@/shared/components/AnimatedSplashScreen' // Импортируем ваш сплеш
+import AnimatedSplashScreen from '@/shared/components/AnimatedSplashScreen' 
 
 SplashScreen.preventAutoHideAsync()
 const queryClient = new QueryClient()
