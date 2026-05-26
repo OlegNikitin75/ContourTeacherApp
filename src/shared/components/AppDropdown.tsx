@@ -1,4 +1,4 @@
-import { colors } from '@/core/constants/theme'
+import { colors, spacing, corner, typography } from '@/core/constants/theme'
 import React, { useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown'
@@ -12,7 +12,7 @@ interface AppDropdownProps {
 	onChange: (value: string) => void
 	onBlur?: () => void
 	onFocus?: () => void
-	disabled?: boolean // 1. Добавляем в интерфейс
+	disabled?: boolean
 }
 
 export default function AppDropdown({
@@ -29,18 +29,21 @@ export default function AppDropdown({
 	const [isFocus, setIsFocus] = useState(false)
 
 	return (
-		<View className='w-full mb-4' style={disabled && { opacity: 0.6 }}> 
-			{label && <Text className='text-h4 text-app-black mb-3'>{label}</Text>}
+		<View style={[styles.container, disabled && styles.disabledContainer]}> 
+			{label && <Text style={styles.label}>{label}</Text>}
+			
 			<Dropdown
 				style={[
 					styles.dropdown,
-					isFocus && { borderColor: colors.appBlack },
-					error && { borderColor: colors.appError },
+					isFocus && styles.borderFocused,
+					error && styles.borderError,
 				]}
 				disable={disabled} 
 				placeholderStyle={styles.placeholderStyle}
 				selectedTextStyle={styles.selectedTextStyle}
+				containerStyle={styles.popupContainer} 
 				itemTextStyle={styles.itemTextStyle}
+				activeColor={colors.appLightGray}выборе
 				data={data}
 				labelField='label'
 				valueField='value'
@@ -66,34 +69,53 @@ export default function AppDropdown({
 	)
 }
 
-
 const styles = StyleSheet.create({
-	label: { fontSize: 14, marginBottom: 8, color: '#333', fontWeight: '500' },
+	container: {
+		width: '100%',
+	},
+	disabledContainer: {
+		opacity: 0.6,
+	},
+	label: {
+		...typography.h4,
+		color: colors.appBlack,
+		marginBottom: spacing(2),
+	},
 	dropdown: {
-		height: 56,
-		borderColor: colors.appLightGray,
+		height: spacing(11),
+		borderColor: 'transparent',
 		borderWidth: 2,
-		borderRadius: 8,
-		paddingHorizontal: 24,
-		backgroundColor: colors.appLightGray
+		borderRadius: corner(2), 
+		paddingHorizontal: spacing(5),
+		backgroundColor: colors.appLightGray,
+	},
+	borderFocused: {
+		borderColor: colors.appBlack,
+	},
+	borderError: {
+		borderColor: colors.appError,
 	},
 	placeholderStyle: {
-		fontSize: 16,
+		...typography.l1,
 		color: colors.appGray,
-		textTransform: 'lowercase',
-		fontFamily: 'JetBrainsMono-Medium'
 	},
 	selectedTextStyle: {
-		fontSize: 16,
+		...typography.l1,
 		color: colors.appBlack,
-		textTransform: 'lowercase',
-		fontFamily: 'JetBrainsMono-Medium'
+	},
+	popupContainer: {
+		borderRadius: corner(2),
+		backgroundColor: colors.appWhite,
+		marginTop: spacing(1),
 	},
 	itemTextStyle: {
-		fontSize: 16,
+		...typography.l1,
 		color: colors.appBlack,
-		textTransform: 'lowercase',
-		fontFamily: 'JetBrainsMono-Medium'
 	},
-	errorText: { color: colors.appError, fontSize: 12, marginTop: 4, marginLeft: 4 }
+	errorText: {
+		...typography.l3,
+		color: colors.appError,
+		marginTop: spacing(1),
+		marginLeft: spacing(1),
+	}
 })
