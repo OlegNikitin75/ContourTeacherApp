@@ -41,7 +41,7 @@ export default function RootLayout() {
 							<Stack screenOptions={{ headerShown: false }}>
 								<Stack.Screen name='index' />
 								<Stack.Screen name='(onboarding)' options={{ animation: 'none' }} />
-								<Stack.Screen name='(tabs)' options={{ animation: 'none' }} />
+								<Stack.Screen name='(tabs)' options={{ animation: 'none' }}      />
 								<Stack.Screen name='(profile)' options={{ presentation: 'modal' }} />
 							</Stack>
 						)}
